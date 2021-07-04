@@ -1,0 +1,22 @@
+#pragma once
+#include <SFML/Graphics.hpp>
+
+class Cooldown {
+public:
+
+	Cooldown(); // Creates 5 sec cooldown
+	Cooldown(sf::Int32 cd_mill ); // time in milliseconds			(	1000 ms = 1s	)
+
+	void StartCooldown();
+	void SetTimer(sf::Int32 cd_mill);
+	bool IsEnded() const;
+
+	// time passed since the cooldown start
+	sf::Time GetTime() const;
+	// is cooldown ended?
+private:
+	sf::Clock clock;
+	sf::Int32 milliseconds;
+
+	bool exists= false; 
+};
