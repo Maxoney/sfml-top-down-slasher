@@ -107,6 +107,9 @@ int main()
 				if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
 				settings_menu.update(game_state, window, event);
 			}
+
+			hero.SetControls(controls_type);
+
 			window.draw(settings_menu);
 			break;
 		}
@@ -126,7 +129,6 @@ int main()
 			// restarting level preparation
 			if(first_time){
 				hero.SetDifficulty(game_difficulty);
-				hero.SetControls(controls_type);
 				hero.SetPosition(0, 0);
 				clip.clear();
 				loot.clear();
