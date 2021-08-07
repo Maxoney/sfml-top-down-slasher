@@ -1,9 +1,7 @@
 #include "include/Chimera.hpp"
 
-Chimera::Chimera(const std::string dir, const std::string _name)
+Chimera::Chimera(const sf::Texture& texture, const std::string _name)
 {
-	texture.loadFromFile(dir);
-	texture.setSmooth(false);
 	sprite.setTexture(texture);
 	sprite.setColor(sf::Color(255, 255, 255, 120));
 	sprite.setTextureRect(sf::IntRect(0, 0, 28, 24));

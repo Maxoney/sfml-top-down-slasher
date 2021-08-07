@@ -98,5 +98,8 @@
     <ClInclude Include="include\Animation.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\TextureStorage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

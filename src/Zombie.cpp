@@ -1,9 +1,7 @@
 #include "include/Zombie.hpp"
 
-Zombie::Zombie(const std::string dir, const std::string _name) 
+Zombie::Zombie(const sf::Texture& texture, const std::string _name)
 {
-	texture.loadFromFile(dir);
-	texture.setSmooth(false);
 	sprite.setTexture(texture);	
 	sprite.setTextureRect(sf::IntRect(0, 0, 37, 21));
 	sprite.setOrigin(37 / 2, 21 / 2);

@@ -25,6 +25,7 @@ int main()
 	window.setKeyRepeatEnabled(false);	// информация считывается только в момент нажатия клавиши (зажатие игнорит)
 	//	при использовании штучки типа "event.type == Event::Pressed && event.key.code == ..."
 
+	std::unique_ptr<TextureStorage> txStorage = std::make_unique<TextureStorage>();
 
 	/////// Game settings ///////
 	GameState game_state = MAIN_MENU;
@@ -40,24 +41,22 @@ int main()
 
 	/////// level1 background ///////
 	sf::Texture background;
-	background.loadFromFile("res/sprites/background.png");
-	background.setSmooth(false);
 	sf::Sprite sbackground;
-	sbackground.setTexture(background);
+	sbackground.setTexture(txStorage->GetTexture("Background"));
 	sbackground.setScale({2,2});
 	sbackground.setPosition(-1280.f, -1280.f);
 
 	/////// UI ///////
 	std::vector<std::unique_ptr<UIComponent>> UI;
-	UI.push_back(std::make_unique<UIComponent>("res/sprites/bars.png", BAR_HP, 0, 0, 13, 18, 4));
-	UI.push_back(std::make_unique<UIComponent>("res/sprites/bars.png", BAR_SP, 0, 18, 12, 15, 4));
-	UI.push_back(std::make_unique<UIComponent>("res/sprites/bars.png", BAR_ENEMY_COUNTER, 12, 22, 13, 11, 2));
-	UI.push_back(std::make_unique<UIComponent>("res/sprites/icons.png", ICON_ATTACK, 0, 0, 16, 16, 2));
-	UI.push_back(std::make_unique<UIComponent>("res/sprites/icons.png", ICON_CHARGE, 16, 0, 16, 16, 2));
-	UI.push_back(std::make_unique<UIComponent>("res/sprites/icons.png", ICON_POWERUP, 32, 0, 16, 16, 2));
+	UI.push_back(std::make_unique<UIComponent>(txStorage->GetTexture("Bars"), BAR_HP, 0, 0, 13, 18, 4));
+	UI.push_back(std::make_unique<UIComponent>(txStorage->GetTexture("Bars"), BAR_SP, 0, 18, 12, 15, 4));
+	UI.push_back(std::make_unique<UIComponent>(txStorage->GetTexture("Bars"), BAR_ENEMY_COUNTER, 12, 22, 13, 11, 2));
+	UI.push_back(std::make_unique<UIComponent>(txStorage->GetTexture("Icons"), ICON_ATTACK, 0, 0, 16, 16, 2));
+	UI.push_back(std::make_unique<UIComponent>(txStorage->GetTexture("Icons"), ICON_CHARGE, 16, 0, 16, 16, 2));
+	UI.push_back(std::make_unique<UIComponent>(txStorage->GetTexture("Icons"), ICON_POWERUP, 32, 0, 16, 16, 2));
 
 	/////// Player, enemies, bullets and powerups ///////
-	Character hero("res/sprites/character.png", 0.f, 0.f, "player1", game_difficulty, controls_type);
+	Character hero(txStorage->GetTexture("Character"), 0.f, 0.f, "player1", game_difficulty, controls_type);
 	std::vector<std::unique_ptr<Enemy>> monsters;
 	std::vector<std::unique_ptr<Bullet>> clip;
 	std::vector<std::unique_ptr<Powerup>> loot;
@@ -136,10 +135,10 @@ int main()
 
 				// spawning monsters;
 				for (size_t i = 0; i < ZOMBIE_COUNT; i++) {
-					monsters.push_back(std::make_unique<Zombie>("res/sprites/deb_zombie.png", "zombie"));
+					monsters.push_back(std::make_unique<Zombie>(txStorage->GetTexture("Zombie"), "zombie"));
 				}
 				for (size_t i = 0; i < CHIMERA_COUNT; i++) {
-					monsters.push_back(std::make_unique<Chimera>("res/sprites/chimera.png", "chimera"));
+					monsters.push_back(std::make_unique<Chimera>(txStorage->GetTexture("Chimera"), "chimera"));
 				}
 
 

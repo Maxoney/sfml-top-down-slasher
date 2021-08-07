@@ -11,7 +11,7 @@
 class Character : public sf::Drawable {
 public:
 	// конструктор, который определяет спрайт и местоположение объекта (а также имя)
-	Character(const std::string dir, float _x, float _y, const std::string _name, const GameDificulty dific, const ControlsType contr);
+	Character(const sf::Texture& texture, float _x, float _y, const std::string _name, const GameDificulty dific, const ControlsType contr);
 
 	// attack method
 	void Attack();
@@ -69,7 +69,6 @@ private:
 	int enemies_amount; // в будущем этого не будет
 
 	Blade blade;
-	sf::Texture texture;
 	sf::Sprite sprite;
 	sf::Vector2f facing_vec;
 };

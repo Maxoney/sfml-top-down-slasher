@@ -187,6 +187,7 @@
     <ClInclude Include="include\Menu.hpp" />
     <ClInclude Include="include\Powerup.hpp" />
     <ClInclude Include="include\quick_functions.hpp" />
+    <ClInclude Include="include\TextureStorage.hpp" />
     <ClInclude Include="include\UI.hpp" />
     <ClInclude Include="include\Zombie.hpp" />
   </ItemGroup>

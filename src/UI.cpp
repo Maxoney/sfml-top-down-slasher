@@ -1,7 +1,7 @@
 #include "..\include\UI.hpp"
 
 
-UIComponent::UIComponent(const std::string dir, UIComponentType _type, int _sx, int _sy, int _height, int _width, float _scale)
+UIComponent::UIComponent(const sf::Texture& texture, UIComponentType _type, int _sx, int _sy, int _height, int _width, float _scale)
 {
 	type = _type;
 	sx = _sx;
@@ -9,8 +9,6 @@ UIComponent::UIComponent(const std::string dir, UIComponentType _type, int _sx, 
 	scale = _scale;
 	height = _height;
 	width = _width;
-	texture.loadFromFile(dir);
-	texture.setSmooth(false);
 	sprite.setTexture(texture);
 	sprite.setTextureRect(sf::IntRect(sx, sy, height, width));
 	sprite.setOrigin(0, 0);

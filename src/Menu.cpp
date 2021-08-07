@@ -277,5 +277,4 @@ void EndLevelMenu::update(GameState & game_state, sf::RenderWindow & window, con
 			}
 		}
 	}
-
 }

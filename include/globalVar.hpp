@@ -1,5 +1,6 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+#include "include/TextureStorage.hpp"
 #include <chrono>
 
 
@@ -11,6 +12,7 @@ constexpr int CENTER_WINDOW_Y = WINDOW_HEIGHT / 2;
 constexpr size_t ZOMBIE_COUNT = 15;
 constexpr size_t CHIMERA_COUNT = 7;
 constexpr auto FONT_LOCATION_FFF_FORWARD = "res/fonts/fff_forward.ttf";
+
 
 
 

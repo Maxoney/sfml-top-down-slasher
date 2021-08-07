@@ -1,10 +1,8 @@
 #include "include/Character.hpp"
 
-Character::Character(const std::string dir, float _x, float _y, const std::string _name, const GameDificulty dific, const ControlsType contr) 
+Character::Character(const sf::Texture& texture, float _x, float _y, const std::string _name, const GameDificulty dific, const ControlsType contr)
 	: blade("res/sprites/blade.png", 3),max_hp(dific==EASY ? 20 : dific==NORMAL ? 10 : 1), max_sp(100)
 {
-	texture.loadFromFile(dir);
-	texture.setSmooth(false);
 	sprite.setTexture(texture);
 	sprite.setTextureRect(sf::IntRect(0, 0, 36, 26));
 	sprite.setOrigin(36 / 2, 26 / 2);

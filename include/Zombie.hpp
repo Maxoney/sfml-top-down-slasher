@@ -4,7 +4,7 @@
 
 class Zombie : public Enemy {
 public:
-	Zombie(const std::string dir, const std::string _name);
+	Zombie(const sf::Texture& texture, const std::string _name);
 
 	void update(float& delta, Character& hero) override;
 	void Movement();

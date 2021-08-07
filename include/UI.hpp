@@ -16,7 +16,7 @@ enum UIComponentType {
 
 class UIComponent : public sf::Drawable {	// плохой класс, который я не хотел разделять на родительский и дочерние
 public:
-	UIComponent(const std::string dir, UIComponentType _type,int _sx, int _sy, int height, int width, float scale);
+	UIComponent(const sf::Texture& texture, UIComponentType _type,int _sx, int _sy, int height, int width, float scale);
 
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
 	void update(const sf::Vector2f& cords, const Character& hero);
@@ -29,7 +29,6 @@ private:
 	UIComponentType type;
 	sf::Font uifont;
 	sf::Text text;
-	sf::Texture texture;
 	sf::RectangleShape rect;
 	sf::Sprite sprite;
 };

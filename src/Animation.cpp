@@ -2,13 +2,7 @@
 
 Animation::Animation(const sf::Texture & texture, sf::Vector2u _frameAmmount, float _switch_time, bool _horizontal)
 {
-	frameAmmount = _frameAmmount;
-	switch_time = _switch_time;
-	currentFrame.x = 0;
-	horizontal = _horizontal;
-
-	frameBounds.width  = float(texture.getSize().x) / float(frameAmmount.x);
-	frameBounds.height = float(texture.getSize().y) / float(frameAmmount.y);
+	Initialize(texture, _frameAmmount, _switch_time, _horizontal);
 }
 
 void Animation::Initialize(const sf::Texture & texture, sf::Vector2u _frameAmmount, float _switch_time, bool _horizontal)

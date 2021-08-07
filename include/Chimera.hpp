@@ -12,7 +12,7 @@ enum ChimDoes {
 // Looks more like gargoyle than chimera
 class Chimera : public Enemy {
 public:
-	Chimera(const std::string dir, const std::string _name);
+	Chimera(const sf::Texture& texture, const std::string _name);
 
 	void update(float& delta, Character& hero) override;
 	float GetAngle() const;

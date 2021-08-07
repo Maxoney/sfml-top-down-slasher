@@ -22,7 +22,6 @@ public:
 
 protected:
 
-	sf::Texture texture;
 	sf::Sprite sprite;
 	sf::Vector2f facing_vec;
 	CreatureState state;
