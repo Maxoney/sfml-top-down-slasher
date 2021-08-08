@@ -84,14 +84,3 @@ float Chimera::GetAngle() const
 {
 	return angle;
 }
-
-
-/*
-void Chimera::Movement()
-{ 
-	doing = JUMPING;
-	if (waiting) {
-		cl_jump.restart();
-		waiting = false;
-	}
-}*/

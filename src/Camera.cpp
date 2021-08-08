@@ -68,17 +68,8 @@ void Camera::update(sf::Vector2f cords, sf::RenderWindow& window) // cords - коо
 	sf::Vector2f dcords; // координаты курсора мыши
 	dcords = MouseWrldPos(window);
 
-	/*/////////////////////////////	не следит за курсором (работает как надо) 		
-	x = smooth.x - (delay.front().x/ k_delay) + (cords.x/ k_delay);
-	y = smooth.y - (delay.front().y/ k_delay) + (cords.y/ k_delay);
-	smooth = { x, y };
-	*//////////////////////////////
-
-	//////////////////////////////	следит за курсосром (вроде работает как надо (а если и не работает, то никто не заметит))
-//	dx = (cords.x * 0.9f + dcords.x * 0.1f) / k_chase - (delay.front().x / k_chase);	//дорого, но прикольно
-//	dy = (cords.y * 0.9f + dcords.y * 0.1f) / k_chase - (delay.front().y / k_chase);
-	x = smooth.x + (sf::Mouse::getPosition(window).x - WINDOW_WIDTH / 2) / 64.f;	//dx;	//дешевле, но тоже прикольно
-	y = smooth.y + (sf::Mouse::getPosition(window).y - WINDOW_HEIGHT / 2) / 64.f;	//dy;
+	x = smooth.x + (sf::Mouse::getPosition(window).x - WINDOW_WIDTH / 2) / 128.f;	//dx;	//дешевле, но тоже прикольно
+	y = smooth.y + (sf::Mouse::getPosition(window).y - WINDOW_HEIGHT / 2) / 128.f;	//dy;
 	if (cords != smooth) {
 		smooth = { ((k_chase - 1)*x/k_chase + cords.x/k_chase),((k_chase - 1)*y/k_chase + cords.y/k_chase)  };
 	} else smooth = { x,y };

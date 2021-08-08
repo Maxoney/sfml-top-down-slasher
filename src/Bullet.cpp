@@ -19,7 +19,7 @@ Bullet::Bullet(float _x, float _y, const sf::Vector2f& facing)
 		dmg = 3;
 	}
 	sprite.setOrigin(2, 2);
-	sprite.setPosition(0, 0); // settin' sprite spawn position
+	sprite.setPosition(_x, _y); // settin' sprite spawn position
 	sprite.setScale(2, 2);
 	x = _x;
 	y = _y;

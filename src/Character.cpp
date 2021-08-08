@@ -232,7 +232,6 @@ void Character::RecieveDmg(int& dmg)
 		hp -= dmg;
 		if (hp < 1) {
 			state = DEAD;
-//			std::cout << "YOU ARE DEAD (OUTSIDE)\n";
 		}
 	}
 }
