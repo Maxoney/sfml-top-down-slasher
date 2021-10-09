@@ -10,10 +10,10 @@ public:
 	void StartCooldown();
 	void SetTimer(sf::Int32 cd_mill);
 	// is cooldown ended?
-	bool IsEnded() const;
+	const bool IsEnded() const;
 
 	// time passed since the cooldown start
-	sf::Time GetTime() const;
+	const sf::Time GetTime() const;
 private:
 	sf::Clock clock;
 	sf::Int32 milliseconds;

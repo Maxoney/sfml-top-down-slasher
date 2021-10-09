@@ -9,8 +9,8 @@
 class Camera {
 public:
 	// accepts spawn coordinates & camera's tangible area
-	Camera(const sf::Vector2f& _size);
-	Camera(const sf::Vector2f& cords, const sf::Vector2f& _size);
+	Camera(const sf::RenderWindow* window);
+	Camera(const sf::Vector2f& cords, const sf::RenderWindow* window);
 
 	void CollisionDetection();
 	// window resize handling
@@ -21,14 +21,22 @@ public:
 	void SetShake();
 	// shakes camera spinning in random directions
 	void SetRadialShake();
-	void update(sf::Vector2f cords, sf::RenderWindow& window);
+	void update();
 
-	sf::View GetCamera() const;
-	sf::Vector2f GetPos() const;
+	const sf::View& GetCamera() const;
+	const sf::Vector2f* GetPos() const { return &smooth; }
+
+	sf::Vector2f Floor() const { 
+		return { std::floor(smooth.x), std::floor(smooth.y) };
+	}
 
 private:
+
+private:
+	const sf::RenderWindow* window;
+	const sf::Vector2f* cords;
 	Cooldown cd_shaking, cd_radialShaking;
-	sf::Vector2f smooth = {0, 0};
+	sf::Vector2f smooth = {0, 0};	// camera position
 	sf::View camera;
 	std::queue<sf::Vector2f> delay;	// очередь положений камеры для создания плавного слежения камеры за персонажем
 

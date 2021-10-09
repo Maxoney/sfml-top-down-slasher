@@ -112,7 +112,7 @@
       <AdditionalIncludeDirectories>D:\Lamot\MyDemos\sfml_test;D:\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;sfml-main-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -168,6 +168,9 @@
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Character.cpp" />
     <ClCompile Include="src\Cooldown.cpp" />
+    <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\globalVar.cpp" />
+    <ClCompile Include="src\level.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Menu.cpp" />
     <ClCompile Include="src\Powerup.cpp" />
@@ -179,15 +182,18 @@
     <ClInclude Include="include\Bullet.hpp" />
     <ClInclude Include="include\Chimera.hpp" />
     <ClInclude Include="include\Enemy.hpp" />
+    <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\globalVar.hpp" />
     <ClInclude Include="include\Blade.hpp" />
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Character.hpp" />
     <ClInclude Include="include\Cooldown.hpp" />
+    <ClInclude Include="include\level.hpp" />
     <ClInclude Include="include\Menu.hpp" />
     <ClInclude Include="include\Powerup.hpp" />
     <ClInclude Include="include\quick_functions.hpp" />
     <ClInclude Include="include\TextureStorage.hpp" />
+    <ClInclude Include="include\Tilemap.h" />
     <ClInclude Include="include\UI.hpp" />
     <ClInclude Include="include\Zombie.hpp" />
   </ItemGroup>

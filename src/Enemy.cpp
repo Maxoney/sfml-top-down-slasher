@@ -1,8 +1,9 @@
 #include "..\include\Enemy.hpp"
 
-Enemy::Enemy()
+
+Enemy::Enemy(Character * hero_, float * delta_)
+	: hero(hero_), delta(delta_)
 {
-	std::cerr << "Empty enemy\n";
 }
 
 void Enemy::draw(sf::RenderTarget & target, sf::RenderStates states) const
@@ -25,10 +26,6 @@ float Enemy::GetAngle() const
 	return angle;
 }
 
-std::string Enemy::GetName() const
-{
-	return name;
-}
 
 CreatureState * Enemy::GetState()
 {

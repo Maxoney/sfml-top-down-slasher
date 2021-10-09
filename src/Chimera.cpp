@@ -1,6 +1,8 @@
 #include "include/Chimera.hpp"
+#include "include/Character.hpp"
 
-Chimera::Chimera(const sf::Texture& texture, const std::string _name)
+Chimera::Chimera(const sf::Texture& texture, Character* hero_, float* delta_)
+	: Enemy(hero_,delta_)
 {
 	sprite.setTexture(texture);
 	sprite.setColor(sf::Color(255, 255, 255, 120));
@@ -8,12 +10,10 @@ Chimera::Chimera(const sf::Texture& texture, const std::string _name)
 	sprite.setOrigin(28 / 2, 24 / 2);
 	float scale = 2;
 	sprite.setScale({ scale,scale });
-	sf::Vector2f pos = RandomCords();
-	sprite.setPosition(pos);	// setting sprite spawn position
-	x = pos.x;
-	y = pos.y;
+	x = 0;
+	y = 0;
+	sprite.setPosition(x, y);	// setting sprite spawn position
 	fov = 600;
-	name = _name;
 	hp = 2;
 	dmg = 1;
 	speed = 20;
@@ -22,13 +22,12 @@ Chimera::Chimera(const sf::Texture& texture, const std::string _name)
 	cd_jump.SetTimer(700); //
 }
 
-void Chimera::update(float & delta, Character & hero)
+void Chimera::update()
 {
 	if (hp > 0) {
 		state = IDLE;
-		sf::Vector2f heroCords = hero.GetCords();
-		facing_vec = Normalize2(heroCords - sf::Vector2f(x, y));
-		float dist = GetFastDistanceBP(heroCords, { x,y });
+		facing_vec = Normalize2(hero->GetCords() - sf::Vector2f(x, y));
+		float dist = GetFastDistanceBP(hero->GetCords(), { x,y });
 		if (dist < (fov*fov)) {		// если игрок в зоне видимости
 			angle = GetAngleOfNormVec2(facing_vec);
 			sprite.setRotation(90 + angle * 57.32);
@@ -73,14 +72,4 @@ void Chimera::update(float & delta, Character & hero)
 			}
 		}
 	}
-}
-
-sf::Vector2f Chimera::GetCords() const
-{
-	return sf::Vector2f(x, y);
-}
-
-float Chimera::GetAngle() const
-{
-	return angle;
 }

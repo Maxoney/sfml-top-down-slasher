@@ -19,6 +19,7 @@ public:
 		Insert("Character", "res/sprites/character.png");
 		Insert("Zombie", "res/sprites/deb_zombie.png");
 		Insert("Chimera", "res/sprites/chimera.png");
+		Insert("Tileset", "res/sprites/tilemap.png");
 	}
 
 	const sf::Texture& GetTexture(std::string name) const {

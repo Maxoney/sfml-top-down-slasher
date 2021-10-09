@@ -50,7 +50,7 @@ public:
 
 	// animation in "update" method does't work as intended because of "clicking handling"
 	void Animation(const sf::Vector2f & mouse_pos);
-	virtual void update(GameState& game_state, sf::RenderWindow& window, const sf::Event& event) = 0;
+	virtual void update(sf::RenderWindow& window, const sf::Event& event) = 0;
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
 
 protected:
@@ -64,16 +64,16 @@ class MainMenu : public Menu {
 public:
 	MainMenu(const int& font_size);
 
-	void update(GameState& game_state, sf::RenderWindow& window, const sf::Event& event);
+	void update(sf::RenderWindow& window, const sf::Event& event);
 };
 
 
 
 class SettingsMenu : public Menu {
 public:
-	SettingsMenu(const int& font_size, GameDificulty& diff, ControlsType& contr);
+	SettingsMenu(const int& font_size);
 
-	void update(GameState& game_state, sf::RenderWindow& window, const sf::Event& event);
+	void update(sf::RenderWindow& window, const sf::Event& event);
 
 private:
 	GameDificulty* difficulty;
@@ -86,7 +86,7 @@ class HelpMenu : public Menu {
 public:
 	HelpMenu(const int& font_size);
 
-	void update(GameState& game_state, sf::RenderWindow& window, const sf::Event& event);
+	void update(sf::RenderWindow& window, const sf::Event& event);
 
 private:
 	int menu_page = 0;
@@ -98,7 +98,7 @@ private:
 
 class EndLevelMenu : public Menu {
 public:
-	EndLevelMenu(const int& font_size, GameState& game_state);
+	EndLevelMenu(const int font_size);
 
-	void update(GameState& game_state, sf::RenderWindow& window, const sf::Event& event);
+	void update(sf::RenderWindow& window, const sf::Event& event);
 };

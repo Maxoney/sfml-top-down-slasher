@@ -9,11 +9,22 @@
 #include "include/Zombie.hpp"
 #include "include/UI.hpp"
 #include "include/Menu.hpp"
+#include "include/game.hpp"
 
-
+int run(Game* game) {
+	game->Init();
+	while (game->Tick()) {}
+	delete game;
+	return 0;
+}
 
 int main()
 {
+	run(new Game());
+
+
+
+	/*
 	/////// "System" settings and utility def ///////
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 2;		//	enabling AA
@@ -85,7 +96,7 @@ int main()
 
 		switch (game_state) {
 
-		case MAIN_MENU:
+		case GameState::MAIN_MENU:
 		{
 			camera->SetMenuPos();
 			window.setView(camera->GetCamera());
@@ -100,7 +111,7 @@ int main()
 			break;
 		}
 
-		case SETTINGS_MENU: {
+		case GameState::SETTINGS_MENU: {
 			settings_menu.Animation(MouseWrldPos(window));
 			while (window.pollEvent(event)) {
 				if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
@@ -113,7 +124,7 @@ int main()
 			break;
 		}
 
-		case HELP_MENU: {
+		case GameState::HELP_MENU: {
 			help_menu.Animation(MouseWrldPos(window));
 			while (window.pollEvent(event)) {
 				if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
@@ -123,7 +134,7 @@ int main()
 			break;
 		}
 
-		case LEVEL1:
+		case GameState::GAME:
 		{
 			// restarting level preparation
 			if(first_time){
@@ -237,7 +248,7 @@ int main()
 				window.draw(*UI[i]);
 			}
 			// is player dead?
-			if (hero.GetHP().y < 1) {
+			if (*(hero.GetHP()).y < 1) {
 				game_state = DEFEAT;
 			}
 			// are all the monsters dead?
@@ -265,6 +276,6 @@ int main()
 		}
 		window.display();
 	}
-
+	//				*/
 	return 0;
 }

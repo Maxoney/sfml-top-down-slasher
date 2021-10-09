@@ -83,7 +83,7 @@ MainMenu::MainMenu(const int& font_size)
 {
 	// отступ слева и снизу
 	int side_indent = 42,
-		bottom_indent = WINDOW_HEIGHT - side_indent - font_size * 1.8 * 4; // 4- ammount of menu sections
+		bottom_indent = Resolution::h - side_indent - font_size * 1.8 * 4; // 4- ammount of menu sections
 	// Play button
 	menu.push_back(std::make_unique<MenuButton>(PLAY, "Start game", font_size, sf::Vector2f(side_indent, bottom_indent)));
 	// Settings button
@@ -98,26 +98,26 @@ MainMenu::MainMenu(const int& font_size)
 	}
 }
 
-void MainMenu::update(GameState & game_state, sf::RenderWindow & window, const sf::Event & event)
+void MainMenu::update(sf::RenderWindow & window, const sf::Event & event)
 {
 	for (size_t i = 0; i < menu.size(); i++) {
 		if (intersects[i] && event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left) {
 //		if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left && menu[i]->GetBoundingBox()->getGlobalBounds().contains(mouse_pos)) {
 			switch (*(menu[i]->GetType()))
 			{
-			case PLAY: game_state = LEVEL1; break;
-			case SETTINGS: game_state = SETTINGS_MENU; break;
-			case HELP: game_state = HELP_MENU; break;
-			case EXIT: window.close(); break;
+			case MenuButtonType::PLAY: GameSettings::game_state = GameState::GAME; break;
+			case MenuButtonType::SETTINGS: GameSettings::game_state = GameState::SETTINGS_MENU; break;
+			case MenuButtonType::HELP: GameSettings::game_state = GameState::HELP_MENU; break;
+			case MenuButtonType::EXIT: window.close(); break;
 			}
 		}
 	}
 }
 
-SettingsMenu::SettingsMenu(const int& font_size, GameDificulty& diff, ControlsType& contr)
+SettingsMenu::SettingsMenu(const int& font_size)
 {
-	difficulty = &diff;
-	controls = &contr;
+	difficulty = &GameSettings::game_difficulty;
+	controls = &GameSettings::controls_type;
 	int side_indent = 120,
 		upper_indent = side_indent; // 4- ammount of menu sections
 	// Controls type change
@@ -125,14 +125,14 @@ SettingsMenu::SettingsMenu(const int& font_size, GameDificulty& diff, ControlsTy
 	// Difficulty change
 	menu.push_back(std::make_unique<MenuButton>(SETTINGS_DIFFICULTY, "Difficulty:  NORMAL", font_size, sf::Vector2f(side_indent, upper_indent + menu.size() * font_size * 3)));
 	// "Back" button
-	menu.push_back(std::make_unique<MenuButton>(BACK, "Back", font_size, sf::Vector2f(64, WINDOW_HEIGHT - 64 - font_size)));
+	menu.push_back(std::make_unique<MenuButton>(BACK, "Back", font_size, sf::Vector2f(64, Resolution::h - 64 - font_size)));
 
 	for (size_t i = 0; i < menu.size(); i++) {
 		intersects.push_back(false);
 	}
 }
 
-void SettingsMenu::update(GameState & game_state, sf::RenderWindow & window, const sf::Event & event)
+void SettingsMenu::update(sf::RenderWindow & window, const sf::Event & event)
 {
 	for (size_t i = 0; i < menu.size(); i++) {
 		if (intersects[i] && event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left) {
@@ -173,7 +173,7 @@ void SettingsMenu::update(GameState & game_state, sf::RenderWindow & window, con
 				menu[i]->ChangeText()->setString("Difficulty:  " + str());
 				break;
 			}
-			case BACK: game_state = MAIN_MENU; break;
+			case BACK: GameSettings::game_state = MAIN_MENU; break;
 			}
 		}
 	}
@@ -184,7 +184,7 @@ HelpMenu::HelpMenu(const int & font_size)
 {
 	// отступ слева и снизу
 	int side_indent = 16,
-		bottom_indent = WINDOW_HEIGHT - side_indent - font_size - 5;
+		bottom_indent = Resolution::h - side_indent - font_size - 5;
 
 	// IMAGES FIRST (to draw properly)
 	menu.push_back(std::make_unique<MenuButton>(IMAGE, "res/sprites/help0.png", font_size, sf::Vector2f(0, 0)));
@@ -192,9 +192,9 @@ HelpMenu::HelpMenu(const int & font_size)
 	menu.push_back(std::make_unique<MenuButton>(TEXT, "Previous", font_size, sf::Vector2f(side_indent, bottom_indent)));
 	menu[menu.size()-1]->ChangeText()->setFillColor(sf::Color(100, 100, 100, 255));
 	// Next page button
-	menu.push_back(std::make_unique<MenuButton>(NEXT, "Next", font_size, sf::Vector2f(WINDOW_WIDTH-side_indent-64, bottom_indent)));
+	menu.push_back(std::make_unique<MenuButton>(NEXT, "Next", font_size, sf::Vector2f(Resolution::w -side_indent-64, bottom_indent)));
 	// Back to Main Menu button
-	menu.push_back(std::make_unique<MenuButton>(BACK, "BACK", font_size, sf::Vector2f(CENTER_WINDOW_X-36, bottom_indent+10)));
+	menu.push_back(std::make_unique<MenuButton>(BACK, "BACK", font_size, sf::Vector2f(Resolution::w>>1 -36, bottom_indent+10)));
 
 	for (size_t i = 0; i < menu.size(); i++) {
 		intersects.push_back(false);
@@ -203,13 +203,13 @@ HelpMenu::HelpMenu(const int & font_size)
 	}
 }
 
-void HelpMenu::update(GameState & game_state, sf::RenderWindow & window, const sf::Event & event)
+void HelpMenu::update(sf::RenderWindow & window, const sf::Event & event)
 {
 	for (size_t i = 0; i < menu.size(); i++) {
 		if (intersects[i] && event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left) {
 			switch (*(menu[i]->GetType()))
 			{
-			case BACK: game_state = MAIN_MENU; break;
+			case BACK: GameSettings::game_state = MAIN_MENU; break;
 			case PREVIOUS:
 				if (menu_page == 1) { 
 					menu_page--; 
@@ -246,34 +246,34 @@ void HelpMenu::update(GameState & game_state, sf::RenderWindow & window, const s
 	}
 }
 
-EndLevelMenu::EndLevelMenu(const int & font_size, GameState & game_state)
+EndLevelMenu::EndLevelMenu(const int font_size)
 {
 	int side_indent = 120,
 		upper_indent = side_indent;
 	std::string str_state;
-	if (game_state == DEFEAT) {
+	if (GameSettings::game_state == DEFEAT) {
 		str_state = "You lost :(";
 	} else str_state = "You won!";
 	// Controls type change
-	menu.push_back(std::make_unique<MenuButton>(TEXT, str_state, font_size, sf::Vector2f(CENTER_WINDOW_X-128, upper_indent)));
+	menu.push_back(std::make_unique<MenuButton>(TEXT, str_state, font_size, sf::Vector2f(Resolution::w>>1 -128, upper_indent)));
 	// Difficulty change
-	menu.push_back(std::make_unique<MenuButton>(BACK, "Main Menu", font_size, sf::Vector2f(32, WINDOW_HEIGHT - 64 - font_size)));
+	menu.push_back(std::make_unique<MenuButton>(BACK, "Main Menu", font_size, sf::Vector2f(32, Resolution::h - 64 - font_size)));
 	// "Back" button
-	menu.push_back(std::make_unique<MenuButton>(PLAY, "Restart", font_size, sf::Vector2f(WINDOW_WIDTH- 256, WINDOW_HEIGHT - 64 - font_size)));
+	menu.push_back(std::make_unique<MenuButton>(PLAY, "Restart", font_size, sf::Vector2f(Resolution::w - 256, Resolution::h - 64 - font_size)));
 
 	for (size_t i = 0; i < menu.size(); i++) {
 		intersects.push_back(false);
 	}
 }
 
-void EndLevelMenu::update(GameState & game_state, sf::RenderWindow & window, const sf::Event & event)
+void EndLevelMenu::update(sf::RenderWindow & window, const sf::Event & event)
 {
 	for (size_t i = 0; i < menu.size(); i++) {
 		if (intersects[i] && event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left) {
 			switch (*(menu[i]->GetType()))
 			{
-			case PLAY: game_state = LEVEL1; break;
-			case BACK: game_state = MAIN_MENU; break;
+			case PLAY: GameSettings::game_state = GAME; break;
+			case BACK: GameSettings::game_state = MAIN_MENU; break;
 			}
 		}
 	}

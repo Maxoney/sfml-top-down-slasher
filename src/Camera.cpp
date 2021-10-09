@@ -1,39 +1,40 @@
 #include "include/Camera.hpp"
 
-Camera::Camera(const sf::Vector2f & _size)
+Camera::Camera(const sf::RenderWindow* window_) 
+	:window(window_)
 {
-	camera.setSize(_size);
-	camera.setCenter(CENTER_WINDOW_X,CENTER_WINDOW_Y);
+	camera.setSize(static_cast<float>(Resolution::w),
+		static_cast<float>(Resolution::h));
+	camera.setCenter(Resolution::w, Resolution::h);
 }
 
-Camera::Camera(const sf::Vector2f& _cords, const sf::Vector2f& _size)
+Camera::Camera(const sf::Vector2f& cords_, const sf::RenderWindow* window_)
+	: cords(&cords_), window(window_)
 {
-	camera.setSize(_size);
+	camera.setSize(static_cast<float>(Resolution::w),
+		static_cast<float>(Resolution::h));
 	for (int i = 0; i < k_delay; i++) {
-		delay.push(_cords);
+		delay.push(*cords);
 	}
-	smooth = _cords;	
-	camera.setCenter(smooth);
+	smooth = *cords;	
+	camera.setCenter(Floor());
 	cd_shaking.SetTimer(50); // 0.05 sec
 	cd_radialShaking.SetTimer(50);
 }
 
-sf::View Camera::GetCamera() const
+const sf::View& Camera::GetCamera() const
 {
 	return camera;
 }
 
-sf::Vector2f Camera::GetPos() const
-{
-	return smooth;
-}
-
 void Camera::CollisionDetection()
 {
-	if (smooth.x >= 825) smooth.x = 825;
-	else if (smooth.x <= -825) smooth.x = -825; // 1280 -/+ 450			+ 5 пикселов для перестраховки (тряска и тд)
-	if (smooth.y >= 975) smooth.y = 975;
-	else if (smooth.y <= -975) smooth.y = -975; // 1280 -/+ 300
+	float xborder = GameSettings::level_width - (Resolution::w / 2),
+		yborder = GameSettings::level_height - (Resolution::h / 2);
+	if (smooth.x >= xborder) smooth.x = xborder;
+	else if (smooth.x <= Resolution::w / 2) smooth.x = Resolution::w / 2;
+	if (smooth.y >= yborder) smooth.y = yborder;
+	else if (smooth.y <= Resolution::h / 2) smooth.y = Resolution::h / 2;
 }
 
 void Camera::Resize(const sf::FloatRect & rect)
@@ -48,7 +49,7 @@ void Camera::SetPos(const sf::Vector2f & pos)
 
 void Camera::SetMenuPos()
 {
-	camera.setCenter(CENTER_WINDOW_X, CENTER_WINDOW_Y);
+	camera.setCenter(Resolution::w>>1, Resolution::h>>1);
 	camera.setRotation(0);
 }
 
@@ -62,16 +63,14 @@ void Camera::SetRadialShake()
 	cd_radialShaking.StartCooldown();
 }
 
-void Camera::update(sf::Vector2f cords, sf::RenderWindow& window) // cords - координаты преследуемого объекта
+void Camera::update() // cords - координаты преследуемого объекта
 {
 	float x, y, dx, dy;
-	sf::Vector2f dcords; // координаты курсора мыши
-	dcords = MouseWrldPos(window);
 
-	x = smooth.x + (sf::Mouse::getPosition(window).x - WINDOW_WIDTH / 2) / 128.f;	//dx;	//дешевле, но тоже прикольно
-	y = smooth.y + (sf::Mouse::getPosition(window).y - WINDOW_HEIGHT / 2) / 128.f;	//dy;
-	if (cords != smooth) {
-		smooth = { ((k_chase - 1)*x/k_chase + cords.x/k_chase),((k_chase - 1)*y/k_chase + cords.y/k_chase)  };
+	x = smooth.x + (sf::Mouse::getPosition(*window).x - WINDOW_WIDTH / 2) / 128.f;	//dx;	//дешевле, но тоже прикольно
+	y = smooth.y + (sf::Mouse::getPosition(*window).y - WINDOW_HEIGHT / 2) / 128.f;	//dy;
+	if (*cords != smooth) {
+		smooth = { ((k_chase - 1)*x/k_chase + cords->x/k_chase),((k_chase - 1)*y/k_chase + cords->y/k_chase)  };
 	} else smooth = { x,y };
 	//////////////////////////////
 
@@ -85,10 +84,9 @@ void Camera::update(sf::Vector2f cords, sf::RenderWindow& window) // cords - коо
 		camera.setRotation(0);
 	} else camera.setRotation(float(std::rand()%20)/10);
 
-
-	camera.setCenter(smooth);
+	camera.setCenter(Floor());
 	delay.pop();
-	delay.push(cords);
+	delay.push(*cords);
 }
 
 
