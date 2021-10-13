@@ -37,6 +37,7 @@ public:
 	// handling stamina loose from external factors (currently not used)
 	void StaminaDrain(int& num);
 	void RecieveDmg(int& dmg);
+	void Reset();
 
 	float GetAngle() const;
 	int GetDmg() const;

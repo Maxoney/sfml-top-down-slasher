@@ -23,6 +23,8 @@ public:
 	void buildMap();
 	void buildMapCollision();
 	void spawnCharacters();
+	const bool& isRunning() const { return running; }
+	void stopRunning() { running = false; }
 
 private:
 	TextureStorage* txStorage;
@@ -39,4 +41,5 @@ private:
 			map_vdecoration;
 
 	size_t* enemies_ammount;
+	bool running = false;
 };

@@ -151,15 +151,15 @@ void Character::updateDifficulty()
 {
 	switch (GameSettings::game_difficulty) {
 	case GameDificulty::EASY: {
-		hp = { 20,20 };
+		hp.x = 20;
 		break;
 	}
 	case GameDificulty::NORMAL: {
-		hp = { 10,10 };
+		hp.x = 10;
 		break;
 	}
 	case GameDificulty::HARD: {
-		hp = { 1,1 };
+		hp.x = 1;
 		break;
 	}
 	}
@@ -246,4 +246,11 @@ void Character::RecieveDmg(int& dmg)
 			state = DEAD;
 		}
 	}
+}
+
+void Character::Reset()
+{
+	updateDifficulty();
+	hp.y = hp.x;
+	sp.y = sp.x;
 }

@@ -53,7 +53,9 @@ void Game::Init()
 
 	///////	Level ///////
 	level = new Level(txStorage, character, camera, &delta);
-	level->Init();
+
+	main_menu->setLevel(level);
+	//level->Init();
 
 	event = new sf::Event();
 	//	нужно для инициализации уровня. после имплементации класса "Level" удалить
@@ -101,8 +103,11 @@ bool Game::Tick()
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) GameSettings::game_state = GameState::MAIN_MENU;
 			settings_menu->update(*window, *event);
 		}
-
+			
 		character->updateControls();
+		if (!level->isRunning()) {
+			character->updateDifficulty();
+		}
 
 		window->draw(*settings_menu);
 		break;
@@ -127,16 +132,16 @@ bool Game::Tick()
 		}
 
 		if (level->update()) {
-			if (GameSettings::level_current < GameSettings::level_last) {
-				GameSettings::level_current++;
-				level->Init();
-			}
 			GameSettings::game_state = GameState::VICTORY;
 			end_level_menu = std::make_unique<EndLevelMenu>(36);
+			end_level_menu->setLevel(level);
+			//level->Init();
 		}
 		else if (character->GetHP()->y < 1) {
 			GameSettings::game_state = GameState::DEFEAT;
+			level->stopRunning();
 			end_level_menu = std::make_unique<EndLevelMenu>(36);
+			end_level_menu->setLevel(level);
 		}
 
 

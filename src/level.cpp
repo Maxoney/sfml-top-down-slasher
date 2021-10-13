@@ -38,6 +38,7 @@ void Level::Init()
 	monsters.clear();
 
 	spawnCharacters();
+	running = true;
 }
 
 bool Level::update()
@@ -49,8 +50,14 @@ bool Level::update()
 	updatePowerups();
 
 	*enemies_ammount = monsters.size();
+	if (*enemies_ammount == 0) {
+		running = false;
+		return true;
+	}
+
 	for (auto &uiPart : UI)
 		uiPart->update();
+
 	return false;
 }
 
@@ -229,6 +236,7 @@ void Level::spawnCharacters()
 			case 453:
 				player->SetPosition(j * tsize * map_terrain.getScale().x,
 										i * tsize * map_terrain.getScale().y);
+				player->Reset();
 			}
 		}
 	}

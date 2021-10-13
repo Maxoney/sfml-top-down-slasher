@@ -15,7 +15,7 @@ static enum MenuButtonType {
 	SETTINGS_DIFFICULTY
 };
 
-
+class Level;
 
 class MenuButton : public sf::Drawable {	// второй ненавидимый мною класс
 public:
@@ -65,6 +65,10 @@ public:
 	MainMenu(const int& font_size);
 
 	void update(sf::RenderWindow& window, const sf::Event& event);
+	void setLevel(Level* level_) { level = level_; }
+
+private:
+	Level* level;
 };
 
 
@@ -74,10 +78,6 @@ public:
 	SettingsMenu(const int& font_size);
 
 	void update(sf::RenderWindow& window, const sf::Event& event);
-
-private:
-	GameDificulty* difficulty;
-	ControlsType* controls;
 };
 
 
@@ -101,4 +101,9 @@ public:
 	EndLevelMenu(const int font_size);
 
 	void update(sf::RenderWindow& window, const sf::Event& event);
+	void setLevel(Level* level_) { level = level_; }
+
+private:
+	Level* level;
+	std::string str_play;
 };
