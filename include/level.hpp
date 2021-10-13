@@ -9,11 +9,14 @@
 
 class Level : public sf::Drawable {
 public:
-	Level(TextureStorage* _txStorage, Character* player_, const Camera* camera, float* delta_);
+	Level(TextureStorage* _txStorage, Character* player_, Camera* camera_, float* delta_);
 	~Level();
 
 	void Init();
 	bool update();
+	void updateEnemies();
+	void updateBullets();
+	void updatePowerups();
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 
@@ -24,11 +27,12 @@ public:
 private:
 	TextureStorage* txStorage;
 	Character* player;
+	Camera* camera;
 	float* delta;
-	std::vector<std::unique_ptr<Enemy>> monsters;
-	std::vector<std::unique_ptr<Bullet>> clip;
-	std::vector<std::unique_ptr<Powerup>> loot;
-	std::vector<std::unique_ptr<UIComponent>> UI;
+	vec_uptrEnemy monsters;
+	vec_uptrBullet clip;
+	vec_uptrPowerup loot;
+	vec_uptrUIComponent UI;
 	std::vector<bool> map_collision;
 	TileMap map_terrain,
 			map_tdecoration,

@@ -17,6 +17,7 @@ Chimera::Chimera(const sf::Texture& texture, Character* hero_, float* delta_)
 	hp = 2;
 	dmg = 1;
 	speed = 20;
+	type = EnemyType::tChimera;
 	cd_attack.SetTimer(700);
 	cd_wait.SetTimer(500);
 	cd_jump.SetTimer(700); //

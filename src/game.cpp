@@ -123,10 +123,7 @@ bool Game::Tick()
 		{
 			if (event->type == sf::Event::Closed) window->close();
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) GameSettings::game_state = GameState::MAIN_MENU;
-			character->Charge(event);
-			if (event->type == sf::Event::MouseButtonPressed && event->key.code == sf::Mouse::Left) {
-				character->Attack();
-			}
+			character->Controls(event);
 		}
 
 		if (level->update()) {
@@ -137,7 +134,7 @@ bool Game::Tick()
 			GameSettings::game_state = GameState::VICTORY;
 			end_level_menu = std::make_unique<EndLevelMenu>(36);
 		}
-		else if (character->GetHP()->x == 0) {
+		else if (character->GetHP()->y < 1) {
 			GameSettings::game_state = GameState::DEFEAT;
 			end_level_menu = std::make_unique<EndLevelMenu>(36);
 		}

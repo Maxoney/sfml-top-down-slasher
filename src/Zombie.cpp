@@ -18,6 +18,7 @@ Zombie::Zombie(const sf::Texture& texture, Character* hero_, float* delta_)
 	dmg = 1;
 	dmgResist = 1;
 	cd_attack.SetTimer(1000);
+	type = EnemyType::tZombie;
 }
 
 void Zombie::update()

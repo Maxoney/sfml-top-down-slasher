@@ -8,6 +8,8 @@
 #include "include/globalVar.hpp"
 #include "include/Powerup.hpp"
 
+class Enemy;
+
 class Character : public sf::Drawable {
 public:
 	// конструктор, который определяет спрайт и местоположение объекта (а также имя)
@@ -16,9 +18,10 @@ public:
 	// attack method
 	void Attack();
 	// finding out moving direction
-	void Controls();
+	void Controls(const sf::Event* event);
+	void Movement();
 	// starting charge
-	void Charge(const sf::Event* event);
+	void Charge();
 	void ChangeControlsType() { controls_fixed^=true; };
 	// detecting some collision
 	void CollisionDetection();
@@ -26,7 +29,8 @@ public:
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
 	void updateControls();
 	void updateDifficulty();
-	void SetEnemiesAmount(const size_t& amount); //	уберу когда поумнею (нужно для UI)
+	// set the vector of enemies
+	void SetEnemies(vec_uptrEnemy* enemies_)	{	enemies = enemies_;	}
 	void SetPosition(const float& _x, const float& _y);
 	// handling powerup pickup
 	void PickUpPowerup(const PowerupType& type);
@@ -59,6 +63,7 @@ public:
 	bool charging = false;
 
 private:
+	vec_uptrEnemy* enemies;
 	const sf::RenderWindow* window;
 	const float* delta;
 	Blade blade;

@@ -3,6 +3,16 @@
 #include <chrono>
 #include "include/TextureStorage.hpp"
 
+class Enemy;
+class Bullet;
+class Powerup;
+class UIComponent;
+
+using vec_uptrEnemy = std::vector<std::unique_ptr<Enemy>>;
+using vec_uptrBullet = std::vector<std::unique_ptr<Bullet>>;
+using vec_uptrPowerup = std::vector<std::unique_ptr<Powerup>>;
+using vec_uptrUIComponent = std::vector<std::unique_ptr<UIComponent>>;
+
 
 constexpr float M_PI_4 = 0.785398163397448309616;  // pi/4
 constexpr int WINDOW_WIDTH = 900;

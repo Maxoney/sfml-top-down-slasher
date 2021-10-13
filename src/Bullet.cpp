@@ -42,3 +42,9 @@ void Bullet::update(Character& hero)
 		type = DAMAGING;
 	}
 }
+
+void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	target.draw(sprite, states);
+}
+

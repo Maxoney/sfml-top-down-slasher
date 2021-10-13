@@ -21,12 +21,6 @@ sf::Vector2f Enemy::GetFacingVec() const
 	return facing_vec;
 }
 
-float Enemy::GetAngle() const
-{
-	return angle;
-}
-
-
 CreatureState * Enemy::GetState()
 {
 	return &state;

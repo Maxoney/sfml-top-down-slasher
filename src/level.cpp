@@ -4,8 +4,8 @@
 #include <iostream>
 #include <fstream>
 
-Level::Level(TextureStorage * _txStorage, Character* player_, const Camera* camera, float* delta_)
-	: txStorage(_txStorage), player(player_), delta(delta_)
+Level::Level(TextureStorage * _txStorage, Character* player_, Camera* camera_, float* delta_)
+	: txStorage(_txStorage), player(player_), camera(camera_), delta(delta_)
 {
 	enemies_ammount = new size_t(0);
 	///////	UI ///////
@@ -42,13 +42,80 @@ void Level::Init()
 
 bool Level::update()
 {
-	for (auto &enemy : monsters)
-		enemy->update();
 	player->update();
+
+	updateEnemies();
+	updateBullets();
+	updatePowerups();
+
 	*enemies_ammount = monsters.size();
 	for (auto &uiPart : UI)
 		uiPart->update();
 	return false;
+}
+
+void Level::updateEnemies()
+{
+	for (size_t i = 0; i < monsters.size(); ++i) {
+		/////// Player attacks ///////
+		if (player->attacking && GetFastDistanceBP(player->GetCords(), monsters[i]->GetCords()) < 5000) {
+			sf::Vector2f hero_to_enemy = Normalize2(monsters[i]->GetCords() - player->GetCords());
+			if (GetAngleBV2(player->GetFacingVec(), hero_to_enemy) < 1.31) {
+				monsters[i]->RecieveDamage(player->GetDmg());
+				camera->SetShake();
+			}
+		}
+		/////// Enemies update ///////
+		monsters[i]->update();
+		if (monsters[i]->GetType() == EnemyType::tChimera) {
+			if (*(monsters[i]->GetState()) == ATTACKING) {
+				clip.push_back(std::make_unique<Bullet>(monsters[i]->GetCords().x, monsters[i]->GetCords().y, monsters[i]->GetFacingVec()));
+				*(monsters[i]->GetState()) = IDLE;
+			}
+		}
+
+		if (*(monsters[i]->GetState()) == DEAD) {
+			if (!(std::rand() % 4))	loot.push_back(std::make_unique<Powerup>(monsters[i]->GetCords()));
+			monsters.erase(monsters.begin() + i);
+			--i;
+		}
+	}
+	player->attacking = false;
+}
+
+void Level::updateBullets()
+{
+	//updating bullets (lifetime, interaction with a player)
+	for (size_t i = 0; i < clip.size(); ++i) {
+		clip[i]->update(*player);
+		if (clip[i]->type == DYING) {
+			clip.erase(clip.begin() + i);
+			--i;
+		}
+		else if (clip[i]->type == DAMAGING) {
+			player->RecieveDmg(clip[i]->dmg);
+			camera->SetRadialShake();
+			clip.erase(clip.begin() + i);
+			--i;
+		}
+	}
+}
+
+void Level::updatePowerups()
+{
+	// updating powerups (lifetime, interaction with a player)
+	for (size_t i = 0; i < loot.size(); ++i) {
+		if (GetFastDistanceBP(player->GetCords(), loot[i]->GetCords()) < 740) {
+			player->PickUpPowerup(loot[i]->GetType());
+			loot.erase(loot.begin() + i);
+			--i;
+		}
+		else if (loot[i]->IsDead()) {
+			loot.erase(loot.begin() + i);
+			--i;
+		}
+	}
+
 }
 
 void Level::draw(sf::RenderTarget & target, sf::RenderStates states) const
@@ -56,8 +123,14 @@ void Level::draw(sf::RenderTarget & target, sf::RenderStates states) const
 	target.draw(map_terrain, states);
 	target.draw(map_tdecoration, states);
 
+	for(auto &powerup : loot)
+		target.draw(*powerup, states);
+
 	for(auto &enemy : monsters)
 		target.draw(*enemy, states);
+
+	for(auto &bullet : clip)
+		target.draw(*bullet, states);
 
 	target.draw(*player, states);
 

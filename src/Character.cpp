@@ -26,8 +26,20 @@ Character::Character(const sf::Texture& texture, float x_, float y_, const sf::R
 	updateControls();
 }
 
-void Character::Controls()
+void Character::Controls(const sf::Event* event = nullptr)
 {
+	if (event) {
+		if (event->type == sf::Event::MouseButtonPressed && event->key.code == sf::Mouse::Left &&
+			cd_attack.IsEnded() && sp.y >= 35) {
+			Attack();
+		}
+
+		if (event->type == sf::Event::KeyPressed && event->key.code == sf::Keyboard::LShift && 
+			cd_charge.IsEnded() && sp.y >= 40) {
+			Charge();
+		}
+	}
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) { 
 		dirup = 1; 
 		state = WALKING_FORWARD; 
@@ -46,22 +58,49 @@ void Character::Controls()
 	}
 
 
-//	charge = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ? 2 : 1;
+	//	charge = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ? 2 : 1;
 	//				if (dirdown^dirleft^dirright^dirup) { sqrt2 = 1.41; }
 	sqrt2 = dirdown^dirleft^dirright^dirup ? 1.41 : 1;
+
+
+
 }
 
-void Character::Charge(const sf::Event* event)
+void Character::Movement()
+{	
+	Controls();
+
+	//	нахождение угла направления персонажа
+	sf::Vector2f worldPos = MouseWrldPos(*window);	// шахер махер с переходом от стандартных оконных координат к мировым
+	facing_vec = Normalize2(worldPos - this->GetCords());	//	вектор смотрения персонажа
+	angle = GetAngleOfNormVec2(facing_vec);
+	sprite.setRotation(90 + angle * 57.32); //		180 / 3.14 = 57.32
+
+	if (controls_fixed) {	// controlls are aligned to vector angle	(управление типа от первого лица играешь)
+		dx = facing_vec.x*float(dirup) - facing_vec.y*float(dirright) + facing_vec.y*float(dirleft) - facing_vec.x*float(dirdown);
+		dy = facing_vec.y*float(dirup) + facing_vec.x*float(dirright) - facing_vec.x*float(dirleft) - facing_vec.y*float(dirdown);
+	}
+	else {	// controlls are aligned to global coordinates system (нормальное управление)
+		dx = float(dirright) - float(dirleft);
+		dy = float(dirdown) - float(dirup);
+	}
+
+	position.x += dx * charge * sqrt2 * *delta * speed;
+	position.y += dy * charge * sqrt2 * *delta * speed;
+	//this->CollisionDetection();
+	sprite.setPosition(position.x, position.y);
+
+}
+
+void Character::Charge()
 {
 	///////// charge effect ///////// 700ms
-	if (event->type == sf::Event::KeyPressed && event->key.code == sf::Keyboard::LShift && cd_charge.IsEnded() && !charging && sp.y >= 40) {
-		cd_charge.StartCooldown();
-		charging = true;
-		sp.y -= 40;
-		//if(state > 0 && state < 9 && state%2){ // если в состоянии ходьбы
-		//	state = (CreatureState)(std::underlying_type<CreatureState>::type(state) + 1); // переход к следующему по порядку состоянию (бег)
-		//}
-	}
+	cd_charge.StartCooldown();
+	charging = true;
+	sp.y -= 40;
+	//if(state > 0 && state < 9 && state%2){ // если в состоянии ходьбы
+	//	state = (CreatureState)(std::underlying_type<CreatureState>::type(state) + 1); // переход к следующему по порядку состоянию (бег)
+	//}
 	/////////////////////////////////
 
 }
@@ -76,10 +115,6 @@ void Character::CollisionDetection()
 
 void Character::update()
 {
-	sf::Vector2f worldPos = MouseWrldPos(*window);	// шахер махер с переходом от стандартных оконных координат к обновленным
-	facing_vec = Normalize2(worldPos - this->GetCords());	//	вектор смотрения персонажа
-	angle = GetAngleOfNormVec2(facing_vec);
-	sprite.setRotation(90 + angle * 57.32); //		180 / 3.14 = 57.32
 
 	if (cd_powerup.IsEnded()) powerup = NONE;
 	if (powerup == ENERGY_BOOST && sp.y < sp.x) sp.y++;
@@ -91,20 +126,8 @@ void Character::update()
 	if (sp.y < sp.x + 1 && cd_charge.IsEnded() && cd_attack.IsEnded()) sp.y++;
 
 
-	this->Controls();
+	this->Movement();
 
-	if (controls_fixed) {	// controlls are aligned to vector angle	(управление типа от первого лица играешь)
-		dx = facing_vec.x*float(dirup) - facing_vec.y*float(dirright) + facing_vec.y*float(dirleft) - facing_vec.x*float(dirdown);
-		dy = facing_vec.y*float(dirup) + facing_vec.x*float(dirright) - facing_vec.x*float(dirleft) - facing_vec.y*float(dirdown);
-	}
-	else {	// controlls are aligned to global coordinates system (нормальное управление)
-		dx = float(dirright) - float(dirleft);
-		dy = float(dirdown) - float(dirup);
-	}
-	position.x += dx * charge * sqrt2 * *delta * speed;
-	position.y += dy * charge * sqrt2 * *delta * speed;
-	//this->CollisionDetection();
-	sprite.setPosition(position.x, position.y);
 
 	if(!cd_attack_anim.IsEnded()) blade.update(this->GetCords(), angle, *delta);
 
@@ -142,10 +165,7 @@ void Character::updateDifficulty()
 	}
 }
 
-void Character::SetEnemiesAmount(const size_t & amount)
-{
-	enemies_amount = amount;
-}
+
 
 void Character::SetPosition(const float & x_, const float & y_)
 {
@@ -188,15 +208,14 @@ const sf::Vector2i* Character::GetSP() const
 
 void Character::Attack()
 {
-	if (sp.y >= 35 && cd_attack.IsEnded()) {
-		sp.y -= 35;
-		cd_attack.StartCooldown();
+	sp.y -= 35;
+	cd_attack.StartCooldown();
 
-		cd_attack_anim.StartCooldown();
-		blade.GetAnimation()->restartAnimation();
+	cd_attack_anim.StartCooldown();
+	blade.GetAnimation()->restartAnimation();
 
-		attacking = true;
-	}
+	attacking = true;
+
 }
 
 float Character::GetAngle() const
