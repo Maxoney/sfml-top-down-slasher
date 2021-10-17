@@ -38,7 +38,8 @@ private:
 	std::vector<bool> map_collision;
 	TileMap map_terrain,
 			map_tdecoration,
-			map_vdecoration;
+			map_vdecoration,
+			gmap_collision;
 
 	size_t* enemies_ammount;
 	bool running = false;

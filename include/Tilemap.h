@@ -49,7 +49,7 @@ public:
 				// get the current tile number
 				int tileNumber;
 				istr >> tileNumber;
-
+				if (tileNumber == -1) continue;
 				// find its position in the tileset texture
 				int tu = tileNumber % (m_tileset->getSize().x / tileSize.x);
 				int tv = tileNumber / (m_tileset->getSize().x / tileSize.x);

@@ -3,13 +3,21 @@
 Character::Character(const sf::Texture& texture, float x_, float y_, const sf::RenderWindow* window_, const float* delta_)
 	: blade("res/sprites/blade.png", 3), window(window_), delta(delta_)
 {
+	int scale = 3;
 	sprite.setTexture(texture);
-	sprite.setTextureRect(sf::IntRect(0, 0, 36, 26));
-	sprite.setOrigin(36 / 2, 26 / 2);
-	sprite.setPosition(0, 0); // settin' sprite spawn position
-	sprite.setScale(2, 2);
-
-	position = { x_,y_ };
+	sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+	sprite.setOrigin((16 >> 1), 14);
+	sprite.setScale(scale, scale);
+	position = { x_ , y_ };
+	sprite.setPosition(position); // settin' sprite spawn position
+	
+	coll_rect.setSize(sf::Vector2f(10 * scale, 4 * scale));
+	coll_rect.setOrigin(coll_rect.getSize().x / 2,
+						coll_rect.getSize().y / 2);
+	coll_rect.setPosition(position);
+	coll_rect.setFillColor(sf::Color::Transparent);
+	coll_rect.setOutlineColor(sf::Color::Cyan);
+	coll_rect.setOutlineThickness(2);
 
 	angle = 0.f;
 
@@ -74,7 +82,7 @@ void Character::Movement()
 	sf::Vector2f worldPos = MouseWrldPos(*window);	// шахер махер с переходом от стандартных оконных координат к мировым
 	facing_vec = Normalize2(worldPos - this->GetCords());	//	вектор смотрения персонажа
 	angle = GetAngleOfNormVec2(facing_vec);
-	sprite.setRotation(90 + angle * 57.32); //		180 / 3.14 = 57.32
+	//sprite.setRotation(90 + angle * 57.32); //		180 / 3.14 = 57.32
 
 	if (controls_fixed) {	// controlls are aligned to vector angle	(управление типа от первого лица играешь)
 		dx = facing_vec.x*float(dirup) - facing_vec.y*float(dirright) + facing_vec.y*float(dirleft) - facing_vec.x*float(dirdown);
@@ -84,12 +92,14 @@ void Character::Movement()
 		dx = float(dirright) - float(dirleft);
 		dy = float(dirdown) - float(dirup);
 	}
-
 	position.x += dx * charge * sqrt2 * *delta * speed;
 	position.y += dy * charge * sqrt2 * *delta * speed;
-	//this->CollisionDetection();
-	sprite.setPosition(position.x, position.y);
 
+	coll_rect.setPosition(position);
+
+	CollisionDetection();
+	//this->CollisionDetection();
+	//CollisionDetection();
 }
 
 void Character::Charge()
@@ -107,10 +117,10 @@ void Character::Charge()
 
 void Character::CollisionDetection()
 {
-	if (position.x >= 1270) position.x = 1270;
-	else if (position.x <= -1270) position.x = -1270; // 1280 -/+ 450			+ 5 пикселов для перестраховки (тряска и тд)
-	if (position.y >= 1270) position.y = 1270;
-	else if (position.y <= -1270) position.y = -1270; // 1280 -/+ 300
+	TerrainCollision(0, 0);
+	TerrainCollision(1, 0);
+	TerrainCollision(0, 1);
+	TerrainCollision(1, 1);
 }
 
 void Character::update()
@@ -122,12 +132,14 @@ void Character::update()
 	if (cd_charge.IsEnded()){		 //charge < 1.f) {
 		charge = 1.f;
 		charging = false;
-	} else  charge = 1 + 40 * EaseOutCubic(cd_charge.GetTime().asSeconds(), 0.5f);
+	} else  charge = 1 + 20 * EaseOutCubic(cd_charge.GetTime().asSeconds(), 0.5f);
 	if (sp.y < sp.x + 1 && cd_charge.IsEnded() && cd_attack.IsEnded()) sp.y++;
 
 
 	this->Movement();
 
+	//sprite.setPosition(position);
+	sprite.setPosition(std::floor(position.x),std::floor(position.y));
 
 	if(!cd_attack_anim.IsEnded()) blade.update(this->GetCords(), angle, *delta);
 
@@ -139,6 +151,7 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	if (!cd_attack_anim.IsEnded()) 	target.draw(blade, states);
 	target.draw(sprite, states);
+	target.draw(coll_rect, states);
 }
 
 void Character::updateControls()
@@ -165,11 +178,10 @@ void Character::updateDifficulty()
 	}
 }
 
-
-
 void Character::SetPosition(const float & x_, const float & y_)
 {
 	position = { x_,y_ };
+	coll_rect.setPosition(position);
 }
 
 void Character::PickUpPowerup(const PowerupType& type)
@@ -228,14 +240,44 @@ int Character::GetDmg() const
 	return dmg;
 }
 
-int Character::GetEnemiesAmount() const
-{
-	return enemies_amount;
-}
-
 CreatureState Character::GetState() const
 {
 	return state;
+}
+
+void Character::TerrainCollision(bool left, bool up)
+{
+	sf::Vector2f hsize = coll_rect.getSize() * coll_rect.getScale().x / 2.f;
+
+	if ((*collision_map)[CordsToIndex(coll_rect.getPosition().x + (1-2*left) * hsize.x,
+		coll_rect.getPosition().y + (1-2*up) * hsize.y)]) {
+
+		//std::cout << "COLLISION DETECTED!\n";
+
+
+		sf::Vector2f corner = { coll_rect.getPosition().x + (1 - 2 * left) * hsize.x,
+								coll_rect.getPosition().y + (1 - 2 * up) * hsize.y };
+		sf::Vector2f tile_pos = { corner.x - static_cast<int>(corner.x) % GameSettings::tile_size + GameSettings::tile_size / 2,
+									corner.y - static_cast<int>(corner.y) % GameSettings::tile_size + GameSettings::tile_size / 2 };
+		sf::Vector2f cords_dif = coll_rect.getPosition() - tile_pos;
+
+		//std::cout << up<< ' ' << left << std::endl
+		//			<< tile_pos.x << ' ' << tile_pos.y << std::endl
+		//			<< corner.x << ' ' << corner.y << std::endl;
+
+		if (fabs(tile_pos.x - corner.x) < fabs(tile_pos.y - corner.y)) {
+			position.y += (1 - 2 * !up) * (static_cast<float>(GameSettings::tile_size / 2) - fabs(tile_pos.y - corner.y));
+			//position.y = std::floorf(position.y);
+		}
+		else {
+			position.x += (1 - 2 * !left) * (static_cast<float>(GameSettings::tile_size / 2) - fabs(tile_pos.x - corner.x));
+			//position.x = std::floorf(position.x);
+		}
+
+		//sprite.setPosition(position);
+		coll_rect.setPosition(position);
+	}
+
 }
 
 void Character::RecieveDmg(int& dmg)

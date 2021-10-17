@@ -22,7 +22,7 @@ constexpr int CENTER_WINDOW_Y = WINDOW_HEIGHT / 2;
 constexpr size_t ZOMBIE_COUNT = 15;
 constexpr size_t CHIMERA_COUNT = 7;
 constexpr auto FONT_LOCATION_FFF_FORWARD = "res/fonts/fff_forward.ttf";
-static float delta = 0.f;
+extern float delta;
 
 namespace Resolution {
 	extern int w,	//	width
@@ -55,7 +55,8 @@ namespace GameSettings {
 	extern ControlsType controls_type;
 	extern int level_last;
 	extern int level_current;
-	extern unsigned int level_width;
+	extern unsigned int tile_size;		//	in pixels
+	extern unsigned int level_width;	//	in tiles
 	extern unsigned int level_height;
 };
 

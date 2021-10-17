@@ -71,3 +71,9 @@ static const sf::Vector2f MouseWrldPos(const sf::RenderWindow& window) {
 static sf::Vector2f RandomCords() {
 	return { float(std::rand() % 2400 - 1200),float(std::rand() % 2400 - 1200) };
 }
+
+template<typename T>
+static size_t CordsToIndex(T x, T y) {
+	return (static_cast<unsigned int>(x) / GameSettings::tile_size +
+		(static_cast<unsigned int>(y) / GameSettings::tile_size) * GameSettings::level_width);
+}

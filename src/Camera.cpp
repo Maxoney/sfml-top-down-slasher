@@ -29,8 +29,8 @@ const sf::View& Camera::GetCamera() const
 
 void Camera::CollisionDetection()
 {
-	float xborder = GameSettings::level_width - (Resolution::w / 2),
-		yborder = GameSettings::level_height - (Resolution::h / 2);
+	float xborder = GameSettings::level_width * GameSettings::tile_size - (Resolution::w / 2),
+		yborder = GameSettings::level_height * GameSettings::tile_size - (Resolution::h / 2);
 	if (smooth.x >= xborder) smooth.x = xborder;
 	else if (smooth.x <= Resolution::w / 2) smooth.x = Resolution::w / 2;
 	if (smooth.y >= yborder) smooth.y = yborder;

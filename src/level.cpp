@@ -50,10 +50,10 @@ bool Level::update()
 	updatePowerups();
 
 	*enemies_ammount = monsters.size();
-	if (*enemies_ammount == 0) {
-		running = false;
-		return true;
-	}
+	//if (*enemies_ammount == 0) {
+	//	running = false;
+	//	return true;
+	//}
 
 	for (auto &uiPart : UI)
 		uiPart->update();
@@ -142,6 +142,7 @@ void Level::draw(sf::RenderTarget & target, sf::RenderStates states) const
 	target.draw(*player, states);
 
 	target.draw(map_vdecoration, states);
+	target.draw(gmap_collision, states);
 
 	for(auto &uiPart : UI)
 		target.draw(*uiPart, states);
@@ -152,17 +153,23 @@ void Level::buildMap()
 	//sBackground->setTexture(txStorage->GetTexture("Background"));
 	map_terrain.load(txStorage, "terrain");
 	std::cout << "terrain loaded" << std::endl;
-	map_terrain.setScale(4.f, 4.f);
 
-	GameSettings::level_width = map_terrain.getWidth() * map_terrain.getScale().x;
-	GameSettings::level_height = map_terrain.getHeight() * map_terrain.getScale().y;
+	float terrain_scale = 4.f;
+	map_terrain.setScale(terrain_scale, terrain_scale);
+
+	GameSettings::level_width = map_terrain.getResolution().x;
+	GameSettings::level_height = map_terrain.getResolution().y;
+	GameSettings::tile_size = map_terrain.getTileSize().x * terrain_scale;
 
 	map_tdecoration.load(txStorage, "tdecoration");
 	std::cout << "tdeco loaded" << std::endl;
-	map_tdecoration.setScale(4.f, 4.f);
+	map_tdecoration.setScale(terrain_scale, terrain_scale);
 	map_vdecoration.load(txStorage, "vdecoration");
 	std::cout << "vdeco loaded" << std::endl;
-	map_vdecoration.setScale(4.f, 4.f);
+	map_vdecoration.setScale(terrain_scale, terrain_scale);
+
+	gmap_collision.load(txStorage, "collision");
+	gmap_collision.setScale(terrain_scale, terrain_scale);
 
 	buildMapCollision();
 	std::cout << "collisions loaded" << std::endl;
@@ -178,6 +185,7 @@ void Level::buildMapCollision()
 	map >> width >> height;
 	map_collision.reserve(width*height);
 
+	map.close();
 	map.open("res/levels/level" + std::to_string(GameSettings::level_current) +
 		"/level_collision.txt");
 	if (!map.is_open()) {
@@ -194,10 +202,11 @@ void Level::buildMapCollision()
 		std::istringstream istr(str);
 		for (unsigned int j = 0; j < width; ++j) {
 			istr >> value;
-			if (value == -1) map_collision.push_back(1);
-			else map_collision.push_back(0);
+			if (value == -1) map_collision.push_back(true);
+			else map_collision.push_back(false);
 		}
 	}
+	player->SetCollisionMap(&map_collision);
 }
 
 void Level::spawnCharacters()

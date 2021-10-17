@@ -16,9 +16,9 @@ public:
 		Insert("Bars", "res/sprites/bars.png");
 
 		////////////	Characters
-		Insert("Character", "res/sprites/character.png");
-		Insert("Zombie", "res/sprites/deb_zombie.png");
-		Insert("Chimera", "res/sprites/chimera.png");
+		Insert("Character", "res/sprites/fHero_.png");
+		Insert("Zombie", "res/sprites/orc_.png");
+		Insert("Chimera", "res/sprites/ghost_.png");
 		Insert("Tileset", "res/sprites/tilemap.png");
 	}
 
