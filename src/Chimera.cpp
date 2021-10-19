@@ -1,18 +1,19 @@
 #include "include/Chimera.hpp"
 #include "include/Character.hpp"
 
-Chimera::Chimera(const sf::Texture& texture, Character* hero_, float* delta_)
-	: Enemy(hero_,delta_)
+Chimera::Chimera(const TextureStorage* texture, Character* hero_, float* delta_)
+	: Enemy(hero_,texture,delta_)
 {
-	sprite.setTexture(texture);
-	sprite.setColor(sf::Color(255, 255, 255, 120));
-	sprite.setTextureRect(sf::IntRect(0, 0, 28, 24));
-	sprite.setOrigin(28 / 2, 24 / 2);
-	float scale = 2;
-	sprite.setScale({ scale,scale });
-	x = 0;
-	y = 0;
-	sprite.setPosition(x, y);	// setting sprite spawn position
+	int scale = 3;
+	sprite.setTexture(txStorage->GetTexture("Chimera"));
+	sprite.setColor(sf::Color(255, 255, 255, 200));
+	sprite.setTextureRect(sf::IntRect(0, 16, 16, 16));
+	sprite.setOrigin((16 >> 1), 14);
+	sprite.setScale(scale, scale);
+	position = { 0 , 0 };
+	sprite.setPosition(position); // settin' sprite spawn position
+
+
 	fov = 600;
 	hp = 2;
 	dmg = 1;
@@ -27,14 +28,13 @@ void Chimera::update()
 {
 	if (hp > 0) {
 		state = IDLE;
-		facing_vec = Normalize2(hero->GetCords() - sf::Vector2f(x, y));
-		float dist = GetFastDistanceBP(hero->GetCords(), { x,y });
+		facing_vec = Normalize2(hero->GetCords() - position);
+		float dist = GetFastDistanceBP(hero->GetCords(), position);
 		if (dist < (fov*fov)) {		// если игрок в зоне видимости
 			angle = GetAngleOfNormVec2(facing_vec);
-			sprite.setRotation(90 + angle * 57.32);
+			//sprite.setRotation(90 + angle * 57.32);
 			state = WALKING;
 			switch (doing) {
-
 				case WAIT:
 					if (cd_wait.IsEnded()) {
 	//					this->Movement();
@@ -53,9 +53,9 @@ void Chimera::update()
 					jump = 10 * EaseOutQuint(cd_jump.GetTime().asSeconds(), 0.4f);
 					dx = cos(jump_angle)*speed;
 					dy = sin(jump_angle)*speed;
-					x += dx * jump;	
-					y += dy * jump;	
-					sprite.setPosition(x, y);
+					position.x += dx * jump;	
+					position.y += dy * jump;	
+					sprite.setPosition(position);
 					if (jump < 0.05 && cd_jump.IsEnded()) {
 						doing = ATTACK;
 						state = ATTACKING;
@@ -69,8 +69,11 @@ void Chimera::update()
 						cd_wait.StartCooldown();
 					}
 					break;
-
 			}
+
+			if (facing_vec.x > 0) sprite.setScale(sprite_scale, sprite_scale);
+			else sprite.setScale(-sprite_scale, sprite_scale);
+
 		}
 	}
 }

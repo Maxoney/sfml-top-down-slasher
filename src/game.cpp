@@ -45,7 +45,7 @@ void Game::Init()
 	help_menu = new HelpMenu(18);
 
 	///////	Character ///////
-	character = new Character(txStorage->GetTexture("Character"), 0.f, 0.f, window, &delta);
+	character = new Character(txStorage, 0.f, 0.f, window, &delta);
 
 	/////// Camera ///////
 	camera = new Camera(character->GetCords(), window);

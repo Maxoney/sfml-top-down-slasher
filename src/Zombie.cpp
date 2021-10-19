@@ -1,17 +1,19 @@
 #include "include/Zombie.hpp"
-#include "include/Character.hpp"
 
-Zombie::Zombie(const sf::Texture& texture, Character* hero_, float* delta_)
-	:	Enemy(hero_, delta_)
+#include "include/Character.hpp"
+#include "include/Weapon.hpp"
+
+Zombie::Zombie(const TextureStorage* texture, Character* hero_, float* delta_)
+	:	Enemy(hero_, texture, delta_)
 {
-	sprite.setTexture(texture);	
-	sprite.setTextureRect(sf::IntRect(0, 0, 37, 21));
-	sprite.setOrigin(37 / 2, 21 / 2);
-	float scale = 2;
-	sprite.setScale({ scale,scale });
-	x = 0;
-	y = 0;
-	sprite.setPosition(x, y);	// setting sprite spawn position
+	sprite.setTexture(txStorage->GetTexture("Zombie"));
+	sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+	sprite.setOrigin((16 >> 1), 14);
+	sprite.setScale(sprite_scale, sprite_scale);
+
+	position = { 0 , 0 };
+	sprite.setPosition(position); // settin' sprite spawn position
+
 	fov = 300;
 	speed = 1.5f;
 	hp = 4;
@@ -19,6 +21,8 @@ Zombie::Zombie(const sf::Texture& texture, Character* hero_, float* delta_)
 	dmgResist = 1;
 	cd_attack.SetTimer(1000);
 	type = EnemyType::tZombie;
+
+	axe = new Weapon(WeaponType::wtAXE, &position, &facing_vec, txStorage);
 }
 
 void Zombie::update()
@@ -26,28 +30,36 @@ void Zombie::update()
 	if (hp > 0) {
 		state = IDLE;
 		within_reach = false;
-		facing_vec = Normalize2(hero->GetCords() - sf::Vector2f(x, y));
-		float dist = GetFastDistanceBP(hero->GetCords(), { x,y });
+		facing_vec = Normalize2(hero->GetCords() - position);
+		float dist = GetFastDistanceBP(hero->GetCords(), position);
 		if (dist < (fov*fov)) {		// если игрок в зоне видимости
 			angle = GetAngleOfNormVec2(facing_vec);
-			sprite.setRotation(90 + angle * 57.32);
-			if (dist > 400) {
+			//sprite.setRotation(90 + angle * 57.32);
+			if (dist > 400.f) {
 				state = WALKING;
 				this->Movement();
 			}
+
 			this->Attack(dist);
+
+			if (facing_vec.x > 0) sprite.setScale(sprite_scale, sprite_scale);
+			else sprite.setScale(-sprite_scale, sprite_scale);
+			axe->update();
 		}
+
 	}
 }
 
 void Zombie::Movement()
 {
-	dx = facing_vec.x*speed;
-	dy = facing_vec.y*speed;
-	float incMov = (static_cast<float>(rand() % 11) / 10) - 0.5f;	// inconsistent movement- переменная непостоянного движения
-	x += dx + incMov;	// delta добавляет подёргивания и неравномерную скорость движения (резкие)
-	y += dy + incMov;	// без delta движение становится плавным и ровным (как по рельсам)
-	sprite.setPosition(x, y);
+	dx = facing_vec.x* (speed - knockback);
+	dy = facing_vec.y* (speed - knockback);
+	//knockback -= *delta * 6.f;	//	-0.1 while the game runs 60fps
+	knockback = knockback < 0.1f ? 0.f : (knockback - *delta * 6.f);
+	float incMov = (static_cast<float>(rand() % 11) / 10.f) - 0.5f;	// inconsistent movement- переменная непостоянного движения
+	position.x += dx + incMov;	// delta добавляет подёргивания и неравномерную скорость движения (резкие)
+	position.y += dy + incMov;	// без delta движение становится плавным и ровным (как по рельсам)
+	sprite.setPosition(position);
 }
 
 void Zombie::Attack(float& dist)
@@ -61,5 +73,17 @@ void Zombie::Attack(float& dist)
 		attacking = false;
 		if (dist > 4000) return;
 		hero->RecieveDmg(dmg);
+	}
+}
+
+void Zombie::draw(sf::RenderTarget & target, sf::RenderStates states) const
+{
+	if (facing_vec.x < 0) {
+		if (cd_attack.IsEnded()) target.draw(*axe, states);
+		target.draw(sprite, states);
+	}
+	else {
+		target.draw(sprite, states);
+		if (cd_attack.IsEnded()) target.draw(*axe, states);
 	}
 }

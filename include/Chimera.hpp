@@ -12,7 +12,7 @@ enum ChimDoes {
 // Looks more like gargoyle than chimera
 class Chimera : public Enemy {
 public:
-	Chimera(const sf::Texture& texture, Character* hero_, float* delta_);
+	Chimera(const TextureStorage* texture, Character* hero_, float* delta_);
 
 	void update() override;
 

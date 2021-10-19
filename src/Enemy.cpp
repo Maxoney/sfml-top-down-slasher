@@ -1,8 +1,8 @@
 #include "..\include\Enemy.hpp"
 
 
-Enemy::Enemy(Character * hero_, float * delta_)
-	: hero(hero_), delta(delta_)
+Enemy::Enemy(Character * hero_, const TextureStorage* texture, float * delta_)
+	: hero(hero_), delta(delta_), txStorage(texture)
 {
 }
 
@@ -13,7 +13,7 @@ void Enemy::draw(sf::RenderTarget & target, sf::RenderStates states) const
 
 sf::Vector2f Enemy::GetCords() const
 {
-	return sf::Vector2f(x, y);
+	return position;
 }
 
 sf::Vector2f Enemy::GetFacingVec() const
@@ -29,6 +29,7 @@ CreatureState * Enemy::GetState()
 void Enemy::RecieveDamage(int dmg)
 {
 	if (dmgResist <= dmg) {
+		knockback = 4.f;
 		hp -= dmg;
 		if (hp < 1) {
 			state = DEAD;

@@ -1,17 +1,18 @@
 #include "include/Character.hpp"
 
-Character::Character(const sf::Texture& texture, float x_, float y_, const sf::RenderWindow* window_, const float* delta_)
-	: blade("res/sprites/blade.png", 3), window(window_), delta(delta_)
+#include "include/Weapon.hpp"
+
+Character::Character(const TextureStorage* texture, float x_, float y_, const sf::RenderWindow* window_, const float* delta_)
+	: blade("res/sprites/blade.png", 3), window(window_), delta(delta_), txStorage(texture)
 {
-	int scale = 3;
-	sprite.setTexture(texture);
+	sprite.setTexture(txStorage->GetTexture("Character"));
 	sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
 	sprite.setOrigin((16 >> 1), 14);
-	sprite.setScale(scale, scale);
+	sprite.setScale(sprite_scale, sprite_scale);
 	position = { x_ , y_ };
 	sprite.setPosition(position); // settin' sprite spawn position
 	
-	coll_rect.setSize(sf::Vector2f(10 * scale, 4 * scale));
+	coll_rect.setSize(sf::Vector2f(10 * sprite_scale, 4 * sprite_scale));
 	coll_rect.setOrigin(coll_rect.getSize().x / 2,
 						coll_rect.getSize().y / 2);
 	coll_rect.setPosition(position);
@@ -31,7 +32,14 @@ Character::Character(const sf::Texture& texture, float x_, float y_, const sf::R
 	cd_powerup.SetTimer(7000);
 	dmg = 2;
 
+	sword = new Weapon(WeaponType::wtSWORD, &position, &facing_vec, txStorage);
+
 	updateControls();
+}
+
+Character::~Character()
+{
+	delete sword;
 }
 
 void Character::Controls(const sf::Event* event = nullptr)
@@ -138,6 +146,10 @@ void Character::update()
 
 	this->Movement();
 
+	sword->update();
+	if (facing_vec.x > 0) sprite.setScale(sprite_scale, sprite_scale);
+	else sprite.setScale(-sprite_scale, sprite_scale);
+
 	//sprite.setPosition(position);
 	sprite.setPosition(std::floor(position.x),std::floor(position.y));
 
@@ -149,9 +161,18 @@ void Character::update()
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (!cd_attack_anim.IsEnded()) 	target.draw(blade, states);
-	target.draw(sprite, states);
-	target.draw(coll_rect, states);
+	//if (!cd_attack_anim.IsEnded()) 	target.draw(blade, states);
+	if (facing_vec.x > 0) {
+		target.draw(sprite, states);
+		if (cd_attack_anim.IsEnded())
+			target.draw(*sword, states);
+	}
+	else {
+		if (cd_attack_anim.IsEnded())
+			target.draw(*sword, states);
+		target.draw(sprite, states);
+	}
+	//target.draw(coll_rect, states);
 }
 
 void Character::updateControls()

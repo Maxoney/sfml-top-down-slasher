@@ -13,7 +13,7 @@ class Character;
 class Enemy : public sf::Drawable {
 public:
 	// конструктор, который определяет спрайт и местоположение объекта (и название)
-	Enemy(Character* hero_, float* delta_);
+	Enemy(Character* hero_, const TextureStorage* texture, float* delta_);
 
 	virtual void update() = 0;
 	void draw(sf::RenderTarget&, sf::RenderStates) const;
@@ -21,23 +21,28 @@ public:
 	float GetAngle() const { return angle; }
 	const EnemyType& GetType() const { return type; }
 
-	void setCords(sf::Vector2f cords) { x = cords.x; y = cords.y; sprite.setPosition(x, y); }
+	void setCords(sf::Vector2f cords) { position = cords; sprite.setPosition(position); }
 	sf::Vector2f GetCords() const;
 	sf::Vector2f GetFacingVec() const;
 	CreatureState* GetState();
 
 protected:
+	const TextureStorage* txStorage;
 	Character* hero;
 	float* delta;
 	sf::Sprite sprite;
 	sf::Vector2f facing_vec;
+
+	sf::Vector2f position;
 	CreatureState state;
 	Cooldown cd_attack;
 	EnemyType type;
 //	Animation anim_attack;
 
-	float x, y, angle, fov, dist,	// координаты, угол смотрения и поле видимости, дистанция между врагом и игроком
+	float angle, fov, dist,	// координаты, угол смотрения и поле видимости, дистанция между врагом и игроком
 		dx, dy, speed;			// смещение по х и у, а также коэффициент скорости
+	float sprite_scale = 3;
+	float knockback;	
 	bool inFOV;			// игрок в поле видимости
 	bool attacking;
 	int hp, dmg, dmgResist;

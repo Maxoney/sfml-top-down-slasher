@@ -142,7 +142,7 @@ void Level::draw(sf::RenderTarget & target, sf::RenderStates states) const
 	target.draw(*player, states);
 
 	target.draw(map_vdecoration, states);
-	target.draw(gmap_collision, states);
+	//target.draw(gmap_collision, states);
 
 	for(auto &uiPart : UI)
 		target.draw(*uiPart, states);
@@ -233,18 +233,18 @@ void Level::spawnCharacters()
 
 			switch (ch_type) {
 			case 427:
-				monsters.push_back(std::make_unique<Zombie>(txStorage->GetTexture("Zombie"), player, delta));
+				monsters.push_back(std::make_unique<Zombie>(txStorage, player, delta));
 				monsters.back()->setCords({ j * tsize * map_terrain.getScale().x,
 										i * tsize * map_terrain.getScale().y });
 				break;
 			case 428:
-				monsters.push_back(std::make_unique<Chimera>(txStorage->GetTexture("Chimera"), player, delta));
+				monsters.push_back(std::make_unique<Chimera>(txStorage, player, delta));
 				monsters.back()->setCords({ j * tsize * map_terrain.getScale().x,
 										i * tsize * map_terrain.getScale().y });
 				break;
 			case 453:
-				player->SetPosition(j * tsize * map_terrain.getScale().x,
-										i * tsize * map_terrain.getScale().y);
+				player->SetPosition(j * tsize * map_terrain.getScale().x + 32,
+										i * tsize * map_terrain.getScale().y + 32);
 				player->Reset();
 			}
 		}

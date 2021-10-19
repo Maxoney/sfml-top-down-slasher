@@ -77,3 +77,11 @@ static size_t CordsToIndex(T x, T y) {
 	return (static_cast<unsigned int>(x) / GameSettings::tile_size +
 		(static_cast<unsigned int>(y) / GameSettings::tile_size) * GameSettings::level_width);
 }
+
+template<typename T>
+static sf::Vector2<T> turnNinety(sf::Vector2<T> vector, bool clockwise) {
+	T temp((1 - 2 * clockwise)*vector.x);
+	vector.x = (1 - 2 * !clockwise)*vector.y;
+	vector.y = std::move(temp);
+	return vector;
+}

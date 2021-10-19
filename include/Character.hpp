@@ -9,12 +9,13 @@
 #include "include/Powerup.hpp"
 
 class Enemy;
+class Weapon;
 
 class Character : public sf::Drawable {
 public:
 	// конструктор, который определяет спрайт и местоположение объекта (а также имя)
-	Character(const sf::Texture& texture, float _x, float _y, const sf::RenderWindow* window_, const float* delta_);
-
+	Character(const TextureStorage* texture, float _x, float _y, const sf::RenderWindow* window_, const float* delta_);
+	~Character();
 	// attack method
 	void Attack();
 	// finding out moving direction
@@ -67,6 +68,8 @@ public:
 	bool charging = false;
 
 private:
+	Weapon* sword;
+	const TextureStorage* txStorage;
 	vec_uptrEnemy* enemies;
 	std::vector<bool>* collision_map;
 	const sf::RenderWindow* window;
@@ -80,6 +83,7 @@ private:
 	sf::RectangleShape coll_rect;	//	collision rectangle
 	float angle; // угол смотрения персонажа
 	float dx, dy;
+	float sprite_scale = 3;
 	float sqrt2 = 1, charge = 1, speed = 100;// допоміжні параметры для передвижения персонажа
 	int dmg; 
 	bool controls_fixed = false; // выключатель управления "типа от первого лица"

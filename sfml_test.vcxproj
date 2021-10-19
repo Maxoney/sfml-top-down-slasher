@@ -175,6 +175,7 @@
     <ClCompile Include="src\Menu.cpp" />
     <ClCompile Include="src\Powerup.cpp" />
     <ClCompile Include="src\UI.cpp" />
+    <ClCompile Include="src\Weapon.cpp" />
     <ClCompile Include="src\Zombie.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +196,7 @@
     <ClInclude Include="include\TextureStorage.hpp" />
     <ClInclude Include="include\Tilemap.h" />
     <ClInclude Include="include\UI.hpp" />
+    <ClInclude Include="include\Weapon.hpp" />
     <ClInclude Include="include\Zombie.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
