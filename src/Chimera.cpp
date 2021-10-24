@@ -1,5 +1,6 @@
 #include "include/Chimera.hpp"
 #include "include/Character.hpp"
+//#include "include/Animation.hpp"
 
 Chimera::Chimera(const TextureStorage* texture, Character* hero_, float* delta_)
 	: Enemy(hero_,texture,delta_)
@@ -22,6 +23,8 @@ Chimera::Chimera(const TextureStorage* texture, Character* hero_, float* delta_)
 	cd_attack.SetTimer(700);
 	cd_wait.SetTimer(500);
 	cd_jump.SetTimer(700); //
+
+	animation.Initialize(sprite, 0.3, 1, delta);
 }
 
 void Chimera::update()
@@ -34,6 +37,7 @@ void Chimera::update()
 			angle = GetAngleOfNormVec2(facing_vec);
 			//sprite.setRotation(90 + angle * 57.32);
 			state = WALKING;
+			
 			switch (doing) {
 				case WAIT:
 					if (cd_wait.IsEnded()) {
@@ -75,5 +79,9 @@ void Chimera::update()
 			else sprite.setScale(-sprite_scale, sprite_scale);
 
 		}
+
+		animation.update(static_cast<int>(state));
+		sprite.setTextureRect(animation.GetBounds());
+
 	}
 }

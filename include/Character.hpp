@@ -68,6 +68,7 @@ public:
 	bool charging = false;
 
 private:
+
 	Weapon* sword;
 	const TextureStorage* txStorage;
 	vec_uptrEnemy* enemies;
@@ -75,6 +76,7 @@ private:
 	const sf::RenderWindow* window;
 	const float* delta;
 	Blade blade;
+	Animation animation;
 	sf::Sprite sprite;
 	std::string name;
 	sf::Vector2i hp, sp;	//	{max_Xp, current_Xp}

@@ -2,6 +2,8 @@
 #include "SFML/Graphics.hpp"
 #include "include/Cooldown.hpp"
 #include "include/quick_functions.hpp"
+#include "include/Animation.hpp"
+
 
 enum EnemyType {
 	tZombie,
@@ -9,6 +11,8 @@ enum EnemyType {
 };
 
 class Character;
+//class Animation;
+
 // родительский класс существ
 class Enemy : public sf::Drawable {
 public:
@@ -30,6 +34,7 @@ protected:
 	const TextureStorage* txStorage;
 	Character* hero;
 	float* delta;
+	Animation animation;
 	sf::Sprite sprite;
 	sf::Vector2f facing_vec;
 

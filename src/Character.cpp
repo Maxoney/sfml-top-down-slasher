@@ -3,7 +3,7 @@
 #include "include/Weapon.hpp"
 
 Character::Character(const TextureStorage* texture, float x_, float y_, const sf::RenderWindow* window_, const float* delta_)
-	: blade("res/sprites/blade.png", 3), window(window_), delta(delta_), txStorage(texture)
+	: blade("res/sprites/blade.png", 3, delta_), window(window_), delta(delta_), txStorage(texture)
 {
 	sprite.setTexture(txStorage->GetTexture("Character"));
 	sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
@@ -33,7 +33,7 @@ Character::Character(const TextureStorage* texture, float x_, float y_, const sf
 	dmg = 2;
 
 	sword = new Weapon(WeaponType::wtSWORD, &position, &facing_vec, txStorage);
-
+	animation.Initialize(sprite, 0.2, 1, delta);
 	updateControls();
 }
 
@@ -58,19 +58,19 @@ void Character::Controls(const sf::Event* event = nullptr)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) { 
 		dirup = 1; 
-		state = WALKING_FORWARD; 
+		state = CreatureState::WALKING;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) { 
 		dirdown = 1; 
-		state = WALKING_BACK;
+		state = CreatureState::WALKING;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) { 
 		dirleft = 1; 
-		state = WALKING_LSIDE;
+		state = CreatureState::WALKING;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) { 
 		dirright = 1; 
-		state = WALKING_RSIDE;
+		state = CreatureState::WALKING;
 	}
 
 
@@ -84,6 +84,7 @@ void Character::Controls(const sf::Event* event = nullptr)
 
 void Character::Movement()
 {	
+	state = CreatureState::IDLE;
 	Controls();
 
 	//	нахождение угла направления персонажа
@@ -146,6 +147,9 @@ void Character::update()
 
 	this->Movement();
 
+	animation.update(static_cast<int>(state));
+	sprite.setTextureRect(animation.GetBounds());
+
 	sword->update();
 	if (facing_vec.x > 0) sprite.setScale(sprite_scale, sprite_scale);
 	else sprite.setScale(-sprite_scale, sprite_scale);
@@ -161,7 +165,7 @@ void Character::update()
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	//if (!cd_attack_anim.IsEnded()) 	target.draw(blade, states);
+	if (!cd_attack_anim.IsEnded()) 	target.draw(blade, states);
 	if (facing_vec.x > 0) {
 		target.draw(sprite, states);
 		if (cd_attack_anim.IsEnded())

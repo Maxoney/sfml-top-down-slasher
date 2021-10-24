@@ -1,26 +1,26 @@
 #include "include/Animation.hpp"
 
-Animation::Animation(const sf::Texture & texture, sf::Vector2u _frameAmmount, float _switch_time, bool _horizontal)
+Animation::Animation(const sf::Sprite & sprite, float _switch_time, bool _horizontal, const float* delta_)
 {
-	Initialize(texture, _frameAmmount, _switch_time, _horizontal);
+	Initialize(sprite, _switch_time, _horizontal, delta_);
 }
 
-void Animation::Initialize(const sf::Texture & texture, sf::Vector2u _frameAmmount, float _switch_time, bool _horizontal)
+void Animation::Initialize(const sf::Sprite & sprite, float _switch_time, bool _horizontal, const float* delta_)
 {
-	frameAmmount = _frameAmmount;
+	delta = delta_;
+	frameBounds = sprite.getTextureRect();
+	frameAmmount = { sprite.getTexture()->getSize().x / frameBounds.width,
+					sprite.getTexture()->getSize().y / frameBounds.height };
 	switch_time = _switch_time;
 	currentFrame.x = 0;
 	horizontal = _horizontal;
-
-	frameBounds.width = texture.getSize().x / float(frameAmmount.x);
-	frameBounds.height = texture.getSize().y / float(frameAmmount.y);
 }
 
-void Animation::update(int row, const float & delta)
+void Animation::update(int row)
 {
 	if (horizontal) {
 		currentFrame.y = row;
-		total_time += delta;
+		total_time += *delta;
 		if (total_time >= switch_time) {
 			total_time -= switch_time;
 			currentFrame.x++;
@@ -29,7 +29,7 @@ void Animation::update(int row, const float & delta)
 	}
 	else {
 		currentFrame.x = row;	// column
-		total_time += delta;
+		total_time += *delta;
 		if (total_time >= switch_time) {
 			total_time -= switch_time;
 			currentFrame.y++;

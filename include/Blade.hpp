@@ -5,7 +5,7 @@
 
 class Blade : public sf::Drawable {
 public:
-	Blade(const std::string dir, float scale);
+	Blade(const std::string dir, float scale, const float* delta_);
 
 	void draw(sf::RenderTarget&, sf::RenderStates) const;	// на данный момент чисто отладочный метод
 //	void attack(sf::Event event);

@@ -1,14 +1,14 @@
 #include "include/Blade.hpp"
 
 
-Blade::Blade(const std::string dir, float scale)
+Blade::Blade(const std::string dir, float scale, const float* delta_)
 {
 	texture.loadFromFile(dir);
-	animation.Initialize(texture, { 1,4 }, 0.033, false);
 	sprite.setTexture(texture);
-	sprite.setTextureRect(animation.GetBounds());
-	sprite.setOrigin(animation.GetBounds().width/2, animation.GetBounds().height);
+	sprite.setTextureRect(sf::IntRect(0,0,34,19));
+	sprite.setOrigin(sprite.getTextureRect().width/2, sprite.getTextureRect().height);
 	sprite.setScale({ scale,scale });
+	animation.Initialize(sprite, 0.033, false, delta_);
 }
 
 void Blade::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -20,7 +20,7 @@ void Blade::update(sf::Vector2f cords, float angle, float delta)
 {
 	sprite.setPosition(cords);
 	sprite.setRotation(90 + angle * 57.32);
-	animation.update(0, delta);
+	animation.update(0);
 	sprite.setTextureRect(animation.GetBounds());
 }
 

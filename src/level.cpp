@@ -50,10 +50,10 @@ bool Level::update()
 	updatePowerups();
 
 	*enemies_ammount = monsters.size();
-	//if (*enemies_ammount == 0) {
-	//	running = false;
-	//	return true;
-	//}
+	if (*enemies_ammount == 0) {
+		running = false;
+		return true;
+	}
 
 	for (auto &uiPart : UI)
 		uiPart->update();

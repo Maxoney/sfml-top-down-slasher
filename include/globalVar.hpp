@@ -61,17 +61,10 @@ namespace GameSettings {
 };
 
 
-enum CreatureState {	// состояния для будущей реализации анимаций
+enum CreatureState {
 	IDLE,
-	WALKING_FORWARD,
-	RUNNING_FORWARD,
-	WALKING_BACK,
-	RUNNING_BACK,
-	WALKING_RSIDE,
-	RUNNING_RSIDE,
-	WALKING_LSIDE,
-	RUNNING_LSIDE,
 	WALKING,
+	JUMPING,
 	ATTACKING,
 	DEAD
 };

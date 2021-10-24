@@ -2,6 +2,7 @@
 
 #include "include/Character.hpp"
 #include "include/Weapon.hpp"
+//#include "include/Animation.hpp"
 
 Zombie::Zombie(const TextureStorage* texture, Character* hero_, float* delta_)
 	:	Enemy(hero_, texture, delta_)
@@ -22,6 +23,8 @@ Zombie::Zombie(const TextureStorage* texture, Character* hero_, float* delta_)
 	cd_attack.SetTimer(1000);
 	type = EnemyType::tZombie;
 
+	animation.Initialize(sprite, 0.2, 1, delta);
+
 	axe = new Weapon(WeaponType::wtAXE, &position, &facing_vec, txStorage);
 }
 
@@ -36,9 +39,9 @@ void Zombie::update()
 			angle = GetAngleOfNormVec2(facing_vec);
 			//sprite.setRotation(90 + angle * 57.32);
 			if (dist > 400.f) {
-				state = WALKING;
 				this->Movement();
 			}
+
 
 			this->Attack(dist);
 
@@ -47,11 +50,15 @@ void Zombie::update()
 			axe->update();
 		}
 
+		animation.update(static_cast<int>(state));
+		sprite.setTextureRect(animation.GetBounds());
+
 	}
 }
 
 void Zombie::Movement()
 {
+	state = WALKING;
 	dx = facing_vec.x* (speed - knockback);
 	dy = facing_vec.y* (speed - knockback);
 	//knockback -= *delta * 6.f;	//	-0.1 while the game runs 60fps
