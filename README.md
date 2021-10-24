@@ -1,7 +1,7 @@
 # sfml-top-down-slasher
 Unfinished 2D top-down slasher ~~game~~ in C++ using SFML 2.5.1
 #### Kill all enemies to win
-![screenshot](https://imgur.com/a/npCSurr)
+![screenshot](https://i.imgur.com/iXjitmJ.png)
 
 ---
 
