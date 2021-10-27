@@ -7,6 +7,7 @@ class Weapon;
 class Zombie : public Enemy {
 public:
 	Zombie(const TextureStorage* texture, Character* hero_, float* delta_);
+	~Zombie();
 
 	void update() override;
 	void Movement();

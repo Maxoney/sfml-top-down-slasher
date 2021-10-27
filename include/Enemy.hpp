@@ -18,6 +18,7 @@ class Enemy : public sf::Drawable {
 public:
 	// конструктор, который определяет спрайт и местоположение объекта (и название)
 	Enemy(Character* hero_, const TextureStorage* texture, float* delta_);
+	virtual ~Enemy() = default;
 
 	virtual void update() = 0;
 	void draw(sf::RenderTarget&, sf::RenderStates) const;

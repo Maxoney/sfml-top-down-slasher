@@ -28,6 +28,11 @@ Zombie::Zombie(const TextureStorage* texture, Character* hero_, float* delta_)
 	axe = new Weapon(WeaponType::wtAXE, &position, &facing_vec, txStorage);
 }
 
+Zombie::~Zombie()
+{
+	delete axe;
+}
+
 void Zombie::update()
 {
 	if (hp > 0) {
